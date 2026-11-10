@@ -1,0 +1,3984 @@
+{
+  "strategy": "RevAI Gold Precision Engine V2",
+  "execution_timeframe": "5M",
+  "status": "COMPLETED",
+  "candles_tested": 4990,
+  "data_gaps_detected": {
+    "1D": 54,
+    "4H": 59,
+    "1H": 220,
+    "15M": 55,
+    "5M": 19
+  },
+  "skipped_setups_by_reason": {
+    "INSUFFICIENT_5M_HISTORY": 29,
+    "5M structure stop is invalid or wider than 2.5 ATR.": 27,
+    "No 15M bearish pullback or sweep/rejection.": 615,
+    "5M entry confirmation did not pass.": 170,
+    "STALE_15M_DATA": 28,
+    "RECENT_15M_DATA_GAP": 1260,
+    "4H or 1H trend is neutral; no trade.": 2039,
+    "STALE_4H_DATA": 188,
+    "RECENT_5M_DATA_GAP": 30,
+    "No 15M bullish pullback or sweep/reclaim.": 94
+  },
+  "rejected_entries": 0,
+  "maximum_holding_bars": 30,
+  "total_trades": 31,
+  "wins": 12,
+  "losses": 19,
+  "breakeven_trades": 0,
+  "win_rate_percent": 38.71,
+  "profit_factor": 0.985,
+  "gross_profit_r": 16.417,
+  "gross_loss_r": 16.669,
+  "net_profit_r": -0.252,
+  "average_r_per_trade": -0.008,
+  "maximum_drawdown_r": 5.93,
+  "tp1_hit_rate_percent": 45.16,
+  "tp2_hit_rate_percent": 32.26,
+  "tp3_hit_rate_percent": 19.35,
+  "stop_loss_rate_percent": 48.39,
+  "costs_included": false,
+  "performance_basis": "Gross R multiples; spread, slippage and commissions are not included.",
+  "trades": [
+    {
+      "timeframe": "PRECISION",
+      "direction": "SELL",
+      "signal_entry_reference": 4128.92,
+      "entry": 4129.11,
+      "stop_loss": 4137.15,
+      "tp1": 4121.07,
+      "tp2": 4117.05,
+      "tp3": 4113.03,
+      "risk_price": 8.04,
+      "entry_epoch": 1792480500,
+      "signal_epoch": 1792480500,
+      "exit_price": 4119.84,
+      "exit_epoch": 1792489500,
+      "exit_reason": "TIMEOUT_AFTER_TP2",
+      "highest_target": 2,
+      "r_multiple": 1.153
+    },
+    {
+      "timeframe": "PRECISION",
+      "direction": "SELL",
+      "signal_entry_reference": 4119.44,
+      "entry": 4119.46,
+      "stop_loss": 4127.77,
+      "tp1": 4111.15,
+      "tp2": 4106.99,
+      "tp3": 4102.84,
+      "risk_price": 8.31,
+      "entry_epoch": 1792499700,
+      "signal_epoch": 1792499700,
+      "exit_price": 4127.77,
+      "exit_epoch": 1792503900,
+      "exit_reason": "STOP_LOSS",
+      "highest_target": 0,
+      "r_multiple": -1.0
+    },
+    {
+      "timeframe": "PRECISION",
+      "direction": "SELL",
+      "signal_entry_reference": 4123.48,
+      "entry": 4123.55,
+      "stop_loss": 4127.13,
+      "tp1": 4119.97,
+      "tp2": 4118.18,
+      "tp3": 4116.39,
+      "risk_price": 3.58,
+      "entry_epoch": 1792521300,
+      "signal_epoch": 1792521300,
+      "exit_price": 4125.29,
+      "exit_epoch": 1792530000,
+      "exit_reason": "TIMEOUT_AFTER_TP1",
+      "highest_target": 1,
+      "r_multiple": -0.486
+    },
+    {
+      "timeframe": "PRECISION",
+      "direction": "SELL",
+      "signal_entry_reference": 4115.51,
+      "entry": 4115.42,
+      "stop_loss": 4124.09,
+      "tp1": 4106.75,
+      "tp2": 4102.41,
+      "tp3": 4098.08,
+      "risk_price": 8.67,
+      "entry_epoch": 1792563000,
+      "signal_epoch": 1792563000,
+      "exit_price": 4124.09,
+      "exit_epoch": 1792567800,
+      "exit_reason": "STOP_LOSS",
+      "highest_target": 0,
+      "r_multiple": -1.0
+    },
+    {
+      "timeframe": "PRECISION",
+      "direction": "SELL",
+      "signal_entry_reference": 4119.6,
+      "entry": 4119.59,
+      "stop_loss": 4123.87,
+      "tp1": 4115.31,
+      "tp2": 4113.17,
+      "tp3": 4111.03,
+      "risk_price": 4.28,
+      "entry_epoch": 1792573200,
+      "signal_epoch": 1792573200,
+      "exit_price": 4123.87,
+      "exit_epoch": 1792574100,
+      "exit_reason": "STOP_LOSS",
+      "highest_target": 0,
+      "r_multiple": -1.0
+    },
+    {
+      "timeframe": "PRECISION",
+      "direction": "SELL",
+      "signal_entry_reference": 4120.68,
+      "entry": 4120.62,
+      "stop_loss": 4126.1,
+      "tp1": 4115.14,
+      "tp2": 4112.4,
+      "tp3": 4109.66,
+      "risk_price": 5.48,
+      "entry_epoch": 1792576500,
+      "signal_epoch": 1792576500,
+      "exit_price": 4126.1,
+      "exit_epoch": 1792579500,
+      "exit_reason": "STOP_LOSS",
+      "highest_target": 2,
+      "r_multiple": -1.0
+    },
+    {
+      "timeframe": "PRECISION",
+      "direction": "SELL",
+      "signal_entry_reference": 4093.61,
+      "entry": 4093.63,
+      "stop_loss": 4101.35,
+      "tp1": 4085.91,
+      "tp2": 4082.05,
+      "tp3": 4078.19,
+      "risk_price": 7.72,
+      "entry_epoch": 1792654200,
+      "signal_epoch": 1792654200,
+      "exit_price": 4088.4,
+      "exit_epoch": 1792663200,
+      "exit_reason": "TIMEOUT_AFTER_TP2",
+      "highest_target": 2,
+      "r_multiple": 0.6775
+    },
+    {
+      "timeframe": "PRECISION",
+      "direction": "SELL",
+      "signal_entry_reference": 4068.19,
+      "entry": 4068.17,
+      "stop_loss": 4086.5,
+      "tp1": 4049.84,
+      "tp2": 4040.68,
+      "tp3": 4031.51,
+      "risk_price": 18.33,
+      "entry_epoch": 1792676400,
+      "signal_epoch": 1792676400,
+      "exit_price": 4047.69,
+      "exit_epoch": 1792685400,
+      "exit_reason": "TIMEOUT_AFTER_TP1",
+      "highest_target": 1,
+      "r_multiple": 1.1173
+    },
+    {
+      "timeframe": "PRECISION",
+      "direction": "SELL",
+      "signal_entry_reference": 4042.55,
+      "entry": 4042.54,
+      "stop_loss": 4048.72,
+      "tp1": 4036.36,
+      "tp2": 4033.27,
+      "tp3": 4030.18,
+      "risk_price": 6.18,
+      "entry_epoch": 1792692300,
+      "signal_epoch": 1792692300,
+      "exit_price": 4030.18,
+      "exit_epoch": 1792695900,
+      "exit_reason": "TP3",
+      "highest_target": 3,
+      "r_multiple": 2.0
+    },
+    {
+      "timeframe": "PRECISION",
+      "direction": "SELL",
+      "signal_entry_reference": 4015.63,
+      "entry": 4015.77,
+      "stop_loss": 4023.09,
+      "tp1": 4008.45,
+      "tp2": 4004.79,
+      "tp3": 4001.13,
+      "risk_price": 7.32,
+      "entry_epoch": 1792737000,
+      "signal_epoch": 1792737000,
+      "exit_price": 4023.09,
+      "exit_epoch": 1792745400,
+      "exit_reason": "STOP_LOSS",
+      "highest_target": 0,
+      "r_multiple": -1.0
+    },
+    {
+      "timeframe": "PRECISION",
+      "direction": "SELL",
+      "signal_entry_reference": 4025.0,
+      "entry": 4025.39,
+      "stop_loss": 4033.91,
+      "tp1": 4016.87,
+      "tp2": 4012.61,
+      "tp3": 4008.35,
+      "risk_price": 8.52,
+      "entry_epoch": 1792762500,
+      "signal_epoch": 1792762500,
+      "exit_price": 4008.35,
+      "exit_epoch": 1792764900,
+      "exit_reason": "TP3",
+      "highest_target": 3,
+      "r_multiple": 2.0
+    },
+    {
+      "timeframe": "PRECISION",
+      "direction": "SELL",
+      "signal_entry_reference": 3999.89,
+      "entry": 3999.73,
+      "stop_loss": 4006.43,
+      "tp1": 3993.03,
+      "tp2": 3989.68,
+      "tp3": 3986.33,
+      "risk_price": 6.7,
+      "entry_epoch": 1792775100,
+      "signal_epoch": 1792775100,
+      "exit_price": 3998.28,
+      "exit_epoch": 1792784100,
+      "exit_reason": "TIMEOUT_AFTER_TP1",
+      "highest_target": 1,
+      "r_multiple": 0.2164
+    },
+    {
+      "timeframe": "PRECISION",
+      "direction": "SELL",
+      "signal_entry_reference": 3996.44,
+      "entry": 3996.54,
+      "stop_loss": 4001.79,
+      "tp1": 3991.29,
+      "tp2": 3988.66,
+      "tp3": 3986.04,
+      "risk_price": 5.25,
+      "entry_epoch": 1792786200,
+      "signal_epoch": 1792786200,
+      "exit_price": 3998.11,
+      "exit_epoch": 1792789200,
+      "exit_reason": "TIMEOUT",
+      "highest_target": 0,
+      "r_multiple": -0.299
+    },
+    {
+      "timeframe": "PRECISION",
+      "direction": "SELL",
+      "signal_entry_reference": 4006.49,
+      "entry": 4006.51,
+      "stop_loss": 4010.22,
+      "tp1": 4002.8,
+      "tp2": 4000.95,
+      "tp3": 3999.09,
+      "risk_price": 3.71,
+      "entry_epoch": 1792998000,
+      "signal_epoch": 1792998000,
+      "exit_price": 4010.22,
+      "exit_epoch": 1793000100,
+      "exit_reason": "STOP_LOSS",
+      "highest_target": 0,
+      "r_multiple": -1.0
+    },
+    {
+      "timeframe": "PRECISION",
+      "direction": "SELL",
+      "signal_entry_reference": 4012.72,
+      "entry": 4012.73,
+      "stop_loss": 4014.89,
+      "tp1": 4010.57,
+      "tp2": 4009.49,
+      "tp3": 4008.41,
+      "risk_price": 2.16,
+      "entry_epoch": 1793045100,
+      "signal_epoch": 1793045100,
+      "exit_price": 4014.89,
+      "exit_epoch": 1793047800,
+      "exit_reason": "STOP_LOSS",
+      "highest_target": 0,
+      "r_multiple": -1.0
+    },
+    {
+      "timeframe": "PRECISION",
+      "direction": "SELL",
+      "signal_entry_reference": 4006.88,
+      "entry": 4006.93,
+      "stop_loss": 4011.72,
+      "tp1": 4002.14,
+      "tp2": 3999.74,
+      "tp3": 3997.35,
+      "risk_price": 4.79,
+      "entry_epoch": 1793081100,
+      "signal_epoch": 1793081100,
+      "exit_price": 4011.72,
+      "exit_epoch": 1793081700,
+      "exit_reason": "STOP_LOSS",
+      "highest_target": 0,
+      "r_multiple": -1.0
+    },
+    {
+      "timeframe": "PRECISION",
+      "direction": "SELL",
+      "signal_entry_reference": 4004.39,
+      "entry": 4004.48,
+      "stop_loss": 4012.54,
+      "tp1": 3996.42,
+      "tp2": 3992.39,
+      "tp3": 3988.36,
+      "risk_price": 8.06,
+      "entry_epoch": 1793082000,
+      "signal_epoch": 1793082000,
+      "exit_price": 3994.87,
+      "exit_epoch": 1793091000,
+      "exit_reason": "TIMEOUT_AFTER_TP2",
+      "highest_target": 2,
+      "r_multiple": 1.1923
+    },
+    {
+      "timeframe": "PRECISION",
+      "direction": "SELL",
+      "signal_entry_reference": 3996.72,
+      "entry": 3996.71,
+      "stop_loss": 4002.71,
+      "tp1": 3990.71,
+      "tp2": 3987.71,
+      "tp3": 3984.71,
+      "risk_price": 6.0,
+      "entry_epoch": 1793092800,
+      "signal_epoch": 1793092800,
+      "exit_price": 4002.71,
+      "exit_epoch": 1793095200,
+      "exit_reason": "STOP_LOSS",
+      "highest_target": 0,
+      "r_multiple": -1.0
+    },
+    {
+      "timeframe": "PRECISION",
+      "direction": "SELL",
+      "signal_entry_reference": 3986.74,
+      "entry": 3986.42,
+      "stop_loss": 3993.49,
+      "tp1": 3979.35,
+      "tp2": 3975.82,
+      "tp3": 3972.28,
+      "risk_price": 7.07,
+      "entry_epoch": 1793355600,
+      "signal_epoch": 1793355600,
+      "exit_price": 3972.28,
+      "exit_epoch": 1793359200,
+      "exit_reason": "TP3",
+      "highest_target": 3,
+      "r_multiple": 2.0
+    },
+    {
+      "timeframe": "PRECISION",
+      "direction": "SELL",
+      "signal_entry_reference": 3877.51,
+      "entry": 3877.5,
+      "stop_loss": 3888.39,
+      "tp1": 3866.61,
+      "tp2": 3861.16,
+      "tp3": 3855.72,
+      "risk_price": 10.89,
+      "entry_epoch": 1793391900,
+      "signal_epoch": 1793391900,
+      "exit_price": 3876.84,
+      "exit_epoch": 1793394000,
+      "exit_reason": "TIMEOUT",
+      "highest_target": 0,
+      "r_multiple": 0.0606
+    },
+    {
+      "timeframe": "PRECISION",
+      "direction": "SELL",
+      "signal_entry_reference": 3901.18,
+      "entry": 3901.18,
+      "stop_loss": 3904.56,
+      "tp1": 3897.8,
+      "tp2": 3896.11,
+      "tp3": 3894.42,
+      "risk_price": 3.38,
+      "entry_epoch": 1793595600,
+      "signal_epoch": 1793595600,
+      "exit_price": 3904.56,
+      "exit_epoch": 1793596200,
+      "exit_reason": "STOP_LOSS",
+      "highest_target": 0,
+      "r_multiple": -1.0
+    },
+    {
+      "timeframe": "PRECISION",
+      "direction": "SELL",
+      "signal_entry_reference": 3906.27,
+      "entry": 3906.27,
+      "stop_loss": 3912.84,
+      "tp1": 3899.7,
+      "tp2": 3896.41,
+      "tp3": 3893.13,
+      "risk_price": 6.57,
+      "entry_epoch": 1793602200,
+      "signal_epoch": 1793602200,
+      "exit_price": 3893.13,
+      "exit_epoch": 1793607600,
+      "exit_reason": "TP3",
+      "highest_target": 3,
+      "r_multiple": 2.0
+    },
+    {
+      "timeframe": "PRECISION",
+      "direction": "SELL",
+      "signal_entry_reference": 3897.82,
+      "entry": 3897.73,
+      "stop_loss": 3906.07,
+      "tp1": 3889.39,
+      "tp2": 3885.22,
+      "tp3": 3881.05,
+      "risk_price": 8.34,
+      "entry_epoch": 1793610000,
+      "signal_epoch": 1793610000,
+      "exit_price": 3904.05,
+      "exit_epoch": 1793619000,
+      "exit_reason": "TIMEOUT",
+      "highest_target": 0,
+      "r_multiple": -0.7578
+    },
+    {
+      "timeframe": "PRECISION",
+      "direction": "SELL",
+      "signal_entry_reference": 3904.74,
+      "entry": 3904.6,
+      "stop_loss": 3910.39,
+      "tp1": 3898.81,
+      "tp2": 3895.91,
+      "tp3": 3893.02,
+      "risk_price": 5.79,
+      "entry_epoch": 1793705100,
+      "signal_epoch": 1793705100,
+      "exit_price": 3910.39,
+      "exit_epoch": 1793708400,
+      "exit_reason": "STOP_LOSS",
+      "highest_target": 0,
+      "r_multiple": -1.0
+    },
+    {
+      "timeframe": "PRECISION",
+      "direction": "SELL",
+      "signal_entry_reference": 3927.86,
+      "entry": 3927.84,
+      "stop_loss": 3934.72,
+      "tp1": 3920.96,
+      "tp2": 3917.52,
+      "tp3": 3914.08,
+      "risk_price": 6.88,
+      "entry_epoch": 1793725200,
+      "signal_epoch": 1793725200,
+      "exit_price": 3934.72,
+      "exit_epoch": 1793729400,
+      "exit_reason": "STOP_LOSS",
+      "highest_target": 0,
+      "r_multiple": -1.0
+    },
+    {
+      "timeframe": "PRECISION",
+      "direction": "BUY",
+      "signal_entry_reference": 4129.32,
+      "entry": 4129.24,
+      "stop_loss": 4119.55,
+      "tp1": 4138.93,
+      "tp2": 4143.77,
+      "tp3": 4148.62,
+      "risk_price": 9.69,
+      "entry_epoch": 1793866800,
+      "signal_epoch": 1793866800,
+      "exit_price": 4128.02,
+      "exit_epoch": 1793875800,
+      "exit_reason": "TIMEOUT",
+      "highest_target": 0,
+      "r_multiple": -0.1259
+    },
+    {
+      "timeframe": "PRECISION",
+      "direction": "BUY",
+      "signal_entry_reference": 4131.82,
+      "entry": 4131.92,
+      "stop_loss": 4125.26,
+      "tp1": 4138.58,
+      "tp2": 4141.91,
+      "tp3": 4145.24,
+      "risk_price": 6.66,
+      "entry_epoch": 1793877300,
+      "signal_epoch": 1793877300,
+      "exit_price": 4125.26,
+      "exit_epoch": 1793881800,
+      "exit_reason": "STOP_LOSS",
+      "highest_target": 0,
+      "r_multiple": -1.0
+    },
+    {
+      "timeframe": "PRECISION",
+      "direction": "BUY",
+      "signal_entry_reference": 4121.8,
+      "entry": 4121.8,
+      "stop_loss": 4111.04,
+      "tp1": 4132.56,
+      "tp2": 4137.94,
+      "tp3": 4143.32,
+      "risk_price": 10.76,
+      "entry_epoch": 1793886300,
+      "signal_epoch": 1793886300,
+      "exit_price": 4111.04,
+      "exit_epoch": 1793889900,
+      "exit_reason": "STOP_LOSS",
+      "highest_target": 1,
+      "r_multiple": -1.0
+    },
+    {
+      "timeframe": "PRECISION",
+      "direction": "BUY",
+      "signal_entry_reference": 4062.45,
+      "entry": 4062.41,
+      "stop_loss": 4056.99,
+      "tp1": 4067.83,
+      "tp2": 4070.54,
+      "tp3": 4073.25,
+      "risk_price": 5.42,
+      "entry_epoch": 1793986500,
+      "signal_epoch": 1793986500,
+      "exit_price": 4056.99,
+      "exit_epoch": 1793987100,
+      "exit_reason": "STOP_LOSS",
+      "highest_target": 0,
+      "r_multiple": -1.0
+    },
+    {
+      "timeframe": "PRECISION",
+      "direction": "BUY",
+      "signal_entry_reference": 4119.97,
+      "entry": 4119.98,
+      "stop_loss": 4114.28,
+      "tp1": 4125.68,
+      "tp2": 4128.53,
+      "tp3": 4131.38,
+      "risk_price": 5.7,
+      "entry_epoch": 1794197400,
+      "signal_epoch": 1794197400,
+      "exit_price": 4131.38,
+      "exit_epoch": 1794198900,
+      "exit_reason": "TP3",
+      "highest_target": 3,
+      "r_multiple": 2.0
+    },
+    {
+      "timeframe": "PRECISION",
+      "direction": "BUY",
+      "signal_entry_reference": 4102.76,
+      "entry": 4102.75,
+      "stop_loss": 4096.26,
+      "tp1": 4109.24,
+      "tp2": 4112.48,
+      "tp3": 4115.73,
+      "risk_price": 6.49,
+      "entry_epoch": 1794223500,
+      "signal_epoch": 1794223500,
+      "exit_price": 4115.73,
+      "exit_epoch": 1794227700,
+      "exit_reason": "TP3",
+      "highest_target": 3,
+      "r_multiple": 2.0
+    }
+  ],
+  "market_data": {
+    "1D": {
+      "requested": 5000,
+      "received": 258,
+      "raw_received": 258,
+      "pages_fetched": 1,
+      "data_quality": {
+        "timeframe": "1D",
+        "granularity_seconds": 86400,
+        "raw_received": 258,
+        "valid_received": 258,
+        "excluded_count": 0,
+        "duplicate_count": 0,
+        "misaligned_count": 0,
+        "invalid_ohlc_count": 0,
+        "gap_count": 54,
+        "gaps": [
+          {
+            "from_epoch": 1763078400,
+            "to_epoch": 1763337600,
+            "gap_seconds": 259200,
+            "missing_intervals_estimate": 2,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1763683200,
+            "to_epoch": 1763942400,
+            "gap_seconds": 259200,
+            "missing_intervals_estimate": 2,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1764288000,
+            "to_epoch": 1764547200,
+            "gap_seconds": 259200,
+            "missing_intervals_estimate": 2,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1764892800,
+            "to_epoch": 1765152000,
+            "gap_seconds": 259200,
+            "missing_intervals_estimate": 2,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1765497600,
+            "to_epoch": 1765756800,
+            "gap_seconds": 259200,
+            "missing_intervals_estimate": 2,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1766102400,
+            "to_epoch": 1766361600,
+            "gap_seconds": 259200,
+            "missing_intervals_estimate": 2,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1766534400,
+            "to_epoch": 1766707200,
+            "gap_seconds": 172800,
+            "missing_intervals_estimate": 1,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1766707200,
+            "to_epoch": 1766966400,
+            "gap_seconds": 259200,
+            "missing_intervals_estimate": 2,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1767139200,
+            "to_epoch": 1767312000,
+            "gap_seconds": 172800,
+            "missing_intervals_estimate": 1,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1767312000,
+            "to_epoch": 1767571200,
+            "gap_seconds": 259200,
+            "missing_intervals_estimate": 2,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1767916800,
+            "to_epoch": 1768176000,
+            "gap_seconds": 259200,
+            "missing_intervals_estimate": 2,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1768521600,
+            "to_epoch": 1768780800,
+            "gap_seconds": 259200,
+            "missing_intervals_estimate": 2,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1769126400,
+            "to_epoch": 1769385600,
+            "gap_seconds": 259200,
+            "missing_intervals_estimate": 2,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1769731200,
+            "to_epoch": 1769990400,
+            "gap_seconds": 259200,
+            "missing_intervals_estimate": 2,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1770336000,
+            "to_epoch": 1770595200,
+            "gap_seconds": 259200,
+            "missing_intervals_estimate": 2,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1770940800,
+            "to_epoch": 1771200000,
+            "gap_seconds": 259200,
+            "missing_intervals_estimate": 2,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1771545600,
+            "to_epoch": 1771804800,
+            "gap_seconds": 259200,
+            "missing_intervals_estimate": 2,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1772150400,
+            "to_epoch": 1772409600,
+            "gap_seconds": 259200,
+            "missing_intervals_estimate": 2,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1772755200,
+            "to_epoch": 1773014400,
+            "gap_seconds": 259200,
+            "missing_intervals_estimate": 2,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1773360000,
+            "to_epoch": 1773619200,
+            "gap_seconds": 259200,
+            "missing_intervals_estimate": 2,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1773964800,
+            "to_epoch": 1774224000,
+            "gap_seconds": 259200,
+            "missing_intervals_estimate": 2,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1774569600,
+            "to_epoch": 1774828800,
+            "gap_seconds": 259200,
+            "missing_intervals_estimate": 2,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1775088000,
+            "to_epoch": 1775433600,
+            "gap_seconds": 345600,
+            "missing_intervals_estimate": 3,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1775779200,
+            "to_epoch": 1776038400,
+            "gap_seconds": 259200,
+            "missing_intervals_estimate": 2,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1776384000,
+            "to_epoch": 1776643200,
+            "gap_seconds": 259200,
+            "missing_intervals_estimate": 2,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1776988800,
+            "to_epoch": 1777248000,
+            "gap_seconds": 259200,
+            "missing_intervals_estimate": 2,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1777593600,
+            "to_epoch": 1777852800,
+            "gap_seconds": 259200,
+            "missing_intervals_estimate": 2,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1778198400,
+            "to_epoch": 1778457600,
+            "gap_seconds": 259200,
+            "missing_intervals_estimate": 2,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1778803200,
+            "to_epoch": 1779062400,
+            "gap_seconds": 259200,
+            "missing_intervals_estimate": 2,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1779408000,
+            "to_epoch": 1779667200,
+            "gap_seconds": 259200,
+            "missing_intervals_estimate": 2,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1780012800,
+            "to_epoch": 1780272000,
+            "gap_seconds": 259200,
+            "missing_intervals_estimate": 2,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1780617600,
+            "to_epoch": 1780876800,
+            "gap_seconds": 259200,
+            "missing_intervals_estimate": 2,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1781222400,
+            "to_epoch": 1781481600,
+            "gap_seconds": 259200,
+            "missing_intervals_estimate": 2,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1781827200,
+            "to_epoch": 1782086400,
+            "gap_seconds": 259200,
+            "missing_intervals_estimate": 2,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1782432000,
+            "to_epoch": 1782691200,
+            "gap_seconds": 259200,
+            "missing_intervals_estimate": 2,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1783036800,
+            "to_epoch": 1783296000,
+            "gap_seconds": 259200,
+            "missing_intervals_estimate": 2,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1783641600,
+            "to_epoch": 1783900800,
+            "gap_seconds": 259200,
+            "missing_intervals_estimate": 2,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1784246400,
+            "to_epoch": 1784505600,
+            "gap_seconds": 259200,
+            "missing_intervals_estimate": 2,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1784851200,
+            "to_epoch": 1785110400,
+            "gap_seconds": 259200,
+            "missing_intervals_estimate": 2,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1785456000,
+            "to_epoch": 1785715200,
+            "gap_seconds": 259200,
+            "missing_intervals_estimate": 2,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1786060800,
+            "to_epoch": 1786320000,
+            "gap_seconds": 259200,
+            "missing_intervals_estimate": 2,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1786665600,
+            "to_epoch": 1786924800,
+            "gap_seconds": 259200,
+            "missing_intervals_estimate": 2,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1787270400,
+            "to_epoch": 1787529600,
+            "gap_seconds": 259200,
+            "missing_intervals_estimate": 2,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1787875200,
+            "to_epoch": 1788134400,
+            "gap_seconds": 259200,
+            "missing_intervals_estimate": 2,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1788480000,
+            "to_epoch": 1788739200,
+            "gap_seconds": 259200,
+            "missing_intervals_estimate": 2,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1789084800,
+            "to_epoch": 1789344000,
+            "gap_seconds": 259200,
+            "missing_intervals_estimate": 2,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1789689600,
+            "to_epoch": 1789948800,
+            "gap_seconds": 259200,
+            "missing_intervals_estimate": 2,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1790294400,
+            "to_epoch": 1790553600,
+            "gap_seconds": 259200,
+            "missing_intervals_estimate": 2,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1790899200,
+            "to_epoch": 1791158400,
+            "gap_seconds": 259200,
+            "missing_intervals_estimate": 2,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1791504000,
+            "to_epoch": 1791763200,
+            "gap_seconds": 259200,
+            "missing_intervals_estimate": 2,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1792108800,
+            "to_epoch": 1792368000,
+            "gap_seconds": 259200,
+            "missing_intervals_estimate": 2,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1792713600,
+            "to_epoch": 1792972800,
+            "gap_seconds": 259200,
+            "missing_intervals_estimate": 2,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1793318400,
+            "to_epoch": 1793577600,
+            "gap_seconds": 259200,
+            "missing_intervals_estimate": 2,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1793923200,
+            "to_epoch": 1794182400,
+            "gap_seconds": 259200,
+            "missing_intervals_estimate": 2,
+            "classification": "EXTENDED_GAP"
+          }
+        ],
+        "rejected_candles": [],
+        "invalid_ohlc_candles": []
+      }
+    },
+    "4H": {
+      "requested": 5000,
+      "received": 1540,
+      "raw_received": 1544,
+      "pages_fetched": 5,
+      "data_quality": {
+        "timeframe": "4H",
+        "granularity_seconds": 14400,
+        "raw_received": 1544,
+        "valid_received": 1540,
+        "excluded_count": 4,
+        "duplicate_count": 0,
+        "misaligned_count": 4,
+        "invalid_ohlc_count": 0,
+        "gap_count": 59,
+        "gaps": [
+          {
+            "from_epoch": 1763150400,
+            "to_epoch": 1763337600,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 12,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1763755200,
+            "to_epoch": 1763942400,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 12,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1764259200,
+            "to_epoch": 1764288000,
+            "gap_seconds": 28800,
+            "missing_intervals_estimate": 1,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1764360000,
+            "to_epoch": 1764547200,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 12,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1764964800,
+            "to_epoch": 1765152000,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 12,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1765569600,
+            "to_epoch": 1765756800,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 12,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1766174400,
+            "to_epoch": 1766361600,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 12,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1766592000,
+            "to_epoch": 1766707200,
+            "gap_seconds": 115200,
+            "missing_intervals_estimate": 7,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1766779200,
+            "to_epoch": 1766966400,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 12,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1767211200,
+            "to_epoch": 1767312000,
+            "gap_seconds": 100800,
+            "missing_intervals_estimate": 6,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1767384000,
+            "to_epoch": 1767571200,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 12,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1767988800,
+            "to_epoch": 1768176000,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 12,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1768593600,
+            "to_epoch": 1768780800,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 12,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1768838400,
+            "to_epoch": 1768867200,
+            "gap_seconds": 28800,
+            "missing_intervals_estimate": 1,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1769198400,
+            "to_epoch": 1769385600,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 12,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1769803200,
+            "to_epoch": 1769990400,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 12,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1770408000,
+            "to_epoch": 1770595200,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 12,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1771012800,
+            "to_epoch": 1771200000,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 12,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1771257600,
+            "to_epoch": 1771286400,
+            "gap_seconds": 28800,
+            "missing_intervals_estimate": 1,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1771617600,
+            "to_epoch": 1771804800,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 12,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1772222400,
+            "to_epoch": 1772409600,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 12,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1772827200,
+            "to_epoch": 1773014400,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 12,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1773432000,
+            "to_epoch": 1773619200,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 12,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1774036800,
+            "to_epoch": 1774224000,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 12,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1774641600,
+            "to_epoch": 1774828800,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 12,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1775160000,
+            "to_epoch": 1775433600,
+            "gap_seconds": 273600,
+            "missing_intervals_estimate": 18,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1775851200,
+            "to_epoch": 1776038400,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 12,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1776456000,
+            "to_epoch": 1776643200,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 12,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1777060800,
+            "to_epoch": 1777248000,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 12,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1777665600,
+            "to_epoch": 1777852800,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 12,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1778270400,
+            "to_epoch": 1778457600,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 12,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1778875200,
+            "to_epoch": 1779062400,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 12,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1779480000,
+            "to_epoch": 1779667200,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 12,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1779724800,
+            "to_epoch": 1779753600,
+            "gap_seconds": 28800,
+            "missing_intervals_estimate": 1,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1780084800,
+            "to_epoch": 1780272000,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 12,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1780689600,
+            "to_epoch": 1780876800,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 12,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1781294400,
+            "to_epoch": 1781481600,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 12,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1781884800,
+            "to_epoch": 1782086400,
+            "gap_seconds": 201600,
+            "missing_intervals_estimate": 13,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1782504000,
+            "to_epoch": 1782691200,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 12,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1783094400,
+            "to_epoch": 1783296000,
+            "gap_seconds": 201600,
+            "missing_intervals_estimate": 13,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1783713600,
+            "to_epoch": 1783900800,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 12,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1784318400,
+            "to_epoch": 1784505600,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 12,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1784923200,
+            "to_epoch": 1785110400,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 12,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1785528000,
+            "to_epoch": 1785715200,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 12,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1786132800,
+            "to_epoch": 1786320000,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 12,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1786737600,
+            "to_epoch": 1786924800,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 12,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1787342400,
+            "to_epoch": 1787529600,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 12,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1787947200,
+            "to_epoch": 1788134400,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 12,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1788552000,
+            "to_epoch": 1788739200,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 12,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1788796800,
+            "to_epoch": 1788825600,
+            "gap_seconds": 28800,
+            "missing_intervals_estimate": 1,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1789156800,
+            "to_epoch": 1789344000,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 12,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1789761600,
+            "to_epoch": 1789948800,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 12,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1790366400,
+            "to_epoch": 1790553600,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 12,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1790971200,
+            "to_epoch": 1791158400,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 12,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1791576000,
+            "to_epoch": 1791763200,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 12,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1792180800,
+            "to_epoch": 1792368000,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 12,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1792785600,
+            "to_epoch": 1792972800,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 12,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1793390400,
+            "to_epoch": 1793577600,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 12,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1793995200,
+            "to_epoch": 1794182400,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 12,
+            "classification": "EXTENDED_GAP"
+          }
+        ],
+        "rejected_candles": [
+          {
+            "reason": "Timestamp not aligned to timeframe",
+            "candle": {
+              "epoch": 1765454978,
+              "open": 4212.32,
+              "high": 4261.41,
+              "low": 4205.51,
+              "close": 4255.9
+            }
+          },
+          {
+            "reason": "Timestamp not aligned to timeframe",
+            "candle": {
+              "epoch": 1772654979,
+              "open": 5130.38,
+              "high": 5165.94,
+              "low": 5124.3,
+              "close": 5165.29
+            }
+          },
+          {
+            "reason": "Timestamp not aligned to timeframe",
+            "candle": {
+              "epoch": 1779854980,
+              "open": 4501.7,
+              "high": 4517.37,
+              "low": 4476.09,
+              "close": 4482.1
+            }
+          },
+          {
+            "reason": "Timestamp not aligned to timeframe",
+            "candle": {
+              "epoch": 1787054981,
+              "open": 4390.84,
+              "high": 4406.54,
+              "low": 4351.81,
+              "close": 4365.04
+            }
+          }
+        ],
+        "invalid_ohlc_candles": []
+      }
+    },
+    "1H": {
+      "requested": 5000,
+      "received": 4965,
+      "raw_received": 4981,
+      "pages_fetched": 17,
+      "data_quality": {
+        "timeframe": "1H",
+        "granularity_seconds": 3600,
+        "raw_received": 4981,
+        "valid_received": 4965,
+        "excluded_count": 16,
+        "duplicate_count": 0,
+        "misaligned_count": 16,
+        "invalid_ohlc_count": 0,
+        "gap_count": 220,
+        "gaps": [
+          {
+            "from_epoch": 1767384000,
+            "to_epoch": 1767571200,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 51,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1767646800,
+            "to_epoch": 1767654000,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1767733200,
+            "to_epoch": 1767740400,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1767819600,
+            "to_epoch": 1767826800,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1767906000,
+            "to_epoch": 1767913200,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1767988800,
+            "to_epoch": 1768176000,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 51,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1768251600,
+            "to_epoch": 1768258800,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1768338000,
+            "to_epoch": 1768345200,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1768424400,
+            "to_epoch": 1768431600,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1768510800,
+            "to_epoch": 1768518000,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1768593600,
+            "to_epoch": 1768780800,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 51,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1768838400,
+            "to_epoch": 1768867200,
+            "gap_seconds": 28800,
+            "missing_intervals_estimate": 7,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1768942800,
+            "to_epoch": 1768950000,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1769029200,
+            "to_epoch": 1769036400,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1769115600,
+            "to_epoch": 1769122800,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1769198400,
+            "to_epoch": 1769385600,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 51,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1769461200,
+            "to_epoch": 1769468400,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1769547600,
+            "to_epoch": 1769554800,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1769634000,
+            "to_epoch": 1769641200,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1769720400,
+            "to_epoch": 1769727600,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1769803200,
+            "to_epoch": 1769990400,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 51,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1770066000,
+            "to_epoch": 1770073200,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1770152400,
+            "to_epoch": 1770159600,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1770238800,
+            "to_epoch": 1770246000,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1770325200,
+            "to_epoch": 1770332400,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1770408000,
+            "to_epoch": 1770595200,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 51,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1770670800,
+            "to_epoch": 1770678000,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1770757200,
+            "to_epoch": 1770764400,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1770843600,
+            "to_epoch": 1770850800,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1770930000,
+            "to_epoch": 1770937200,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1771012800,
+            "to_epoch": 1771200000,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 51,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1771257600,
+            "to_epoch": 1771286400,
+            "gap_seconds": 28800,
+            "missing_intervals_estimate": 7,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1771362000,
+            "to_epoch": 1771369200,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1771448400,
+            "to_epoch": 1771455600,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1771534800,
+            "to_epoch": 1771542000,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1771617600,
+            "to_epoch": 1771804800,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 51,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1771880400,
+            "to_epoch": 1771887600,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1771966800,
+            "to_epoch": 1771974000,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1772053200,
+            "to_epoch": 1772060400,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1772139600,
+            "to_epoch": 1772146800,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1772222400,
+            "to_epoch": 1772409600,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 51,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1772485200,
+            "to_epoch": 1772492400,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1772571600,
+            "to_epoch": 1772578800,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1772658000,
+            "to_epoch": 1772665200,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1772744400,
+            "to_epoch": 1772751600,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1772827200,
+            "to_epoch": 1773014400,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 51,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1773086400,
+            "to_epoch": 1773093600,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1773172800,
+            "to_epoch": 1773180000,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1773259200,
+            "to_epoch": 1773266400,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1773345600,
+            "to_epoch": 1773352800,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1773432000,
+            "to_epoch": 1773619200,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 51,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1773691200,
+            "to_epoch": 1773698400,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1773777600,
+            "to_epoch": 1773784800,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1773864000,
+            "to_epoch": 1773871200,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1773950400,
+            "to_epoch": 1773957600,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1774036800,
+            "to_epoch": 1774224000,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 51,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1774296000,
+            "to_epoch": 1774303200,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1774382400,
+            "to_epoch": 1774389600,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1774468800,
+            "to_epoch": 1774476000,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1774555200,
+            "to_epoch": 1774562400,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1774641600,
+            "to_epoch": 1774828800,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 51,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1774900800,
+            "to_epoch": 1774908000,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1774987200,
+            "to_epoch": 1774994400,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1775073600,
+            "to_epoch": 1775080800,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1775160000,
+            "to_epoch": 1775433600,
+            "gap_seconds": 273600,
+            "missing_intervals_estimate": 75,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1775505600,
+            "to_epoch": 1775512800,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1775592000,
+            "to_epoch": 1775599200,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1775678400,
+            "to_epoch": 1775685600,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1775764800,
+            "to_epoch": 1775772000,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1775851200,
+            "to_epoch": 1776038400,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 51,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1776110400,
+            "to_epoch": 1776117600,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1776196800,
+            "to_epoch": 1776204000,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1776283200,
+            "to_epoch": 1776290400,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1776369600,
+            "to_epoch": 1776376800,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1776456000,
+            "to_epoch": 1776643200,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 51,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1776715200,
+            "to_epoch": 1776722400,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1776801600,
+            "to_epoch": 1776808800,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1776888000,
+            "to_epoch": 1776895200,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1776974400,
+            "to_epoch": 1776981600,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1777060800,
+            "to_epoch": 1777248000,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 51,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1777320000,
+            "to_epoch": 1777327200,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1777406400,
+            "to_epoch": 1777413600,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1777492800,
+            "to_epoch": 1777500000,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1777579200,
+            "to_epoch": 1777586400,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1777665600,
+            "to_epoch": 1777852800,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 51,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1777924800,
+            "to_epoch": 1777932000,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1778011200,
+            "to_epoch": 1778018400,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1778097600,
+            "to_epoch": 1778104800,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1778184000,
+            "to_epoch": 1778191200,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1778270400,
+            "to_epoch": 1778457600,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 51,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1778529600,
+            "to_epoch": 1778536800,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1778616000,
+            "to_epoch": 1778623200,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1778702400,
+            "to_epoch": 1778709600,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1778788800,
+            "to_epoch": 1778796000,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1778875200,
+            "to_epoch": 1779062400,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 51,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1779134400,
+            "to_epoch": 1779141600,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1779220800,
+            "to_epoch": 1779228000,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1779307200,
+            "to_epoch": 1779314400,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1779393600,
+            "to_epoch": 1779400800,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1779480000,
+            "to_epoch": 1779667200,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 51,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1779732000,
+            "to_epoch": 1779753600,
+            "gap_seconds": 21600,
+            "missing_intervals_estimate": 5,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1779825600,
+            "to_epoch": 1779832800,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1779912000,
+            "to_epoch": 1779919200,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1779998400,
+            "to_epoch": 1780005600,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1780084800,
+            "to_epoch": 1780272000,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 51,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1780344000,
+            "to_epoch": 1780351200,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1780430400,
+            "to_epoch": 1780437600,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1780516800,
+            "to_epoch": 1780524000,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1780603200,
+            "to_epoch": 1780610400,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1780689600,
+            "to_epoch": 1780876800,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 51,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1780948800,
+            "to_epoch": 1780956000,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1781035200,
+            "to_epoch": 1781042400,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1781121600,
+            "to_epoch": 1781128800,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1781208000,
+            "to_epoch": 1781215200,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1781294400,
+            "to_epoch": 1781481600,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 51,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1781553600,
+            "to_epoch": 1781560800,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1781640000,
+            "to_epoch": 1781647200,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1781726400,
+            "to_epoch": 1781733600,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1781812800,
+            "to_epoch": 1781820000,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1781888400,
+            "to_epoch": 1782086400,
+            "gap_seconds": 198000,
+            "missing_intervals_estimate": 54,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1782158400,
+            "to_epoch": 1782165600,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1782244800,
+            "to_epoch": 1782252000,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1782331200,
+            "to_epoch": 1782338400,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1782417600,
+            "to_epoch": 1782424800,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1782504000,
+            "to_epoch": 1782691200,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 51,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1782763200,
+            "to_epoch": 1782770400,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1782849600,
+            "to_epoch": 1782856800,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1782936000,
+            "to_epoch": 1782943200,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1783022400,
+            "to_epoch": 1783029600,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1783098000,
+            "to_epoch": 1783296000,
+            "gap_seconds": 198000,
+            "missing_intervals_estimate": 54,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1783368000,
+            "to_epoch": 1783375200,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1783454400,
+            "to_epoch": 1783461600,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1783540800,
+            "to_epoch": 1783548000,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1783627200,
+            "to_epoch": 1783634400,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1783713600,
+            "to_epoch": 1783900800,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 51,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1783972800,
+            "to_epoch": 1783980000,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1784059200,
+            "to_epoch": 1784066400,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1784145600,
+            "to_epoch": 1784152800,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1784232000,
+            "to_epoch": 1784239200,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1784318400,
+            "to_epoch": 1784505600,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 51,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1784577600,
+            "to_epoch": 1784584800,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1784664000,
+            "to_epoch": 1784671200,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1784750400,
+            "to_epoch": 1784757600,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1784836800,
+            "to_epoch": 1784844000,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1784923200,
+            "to_epoch": 1785110400,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 51,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1785182400,
+            "to_epoch": 1785189600,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1785268800,
+            "to_epoch": 1785276000,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1785355200,
+            "to_epoch": 1785362400,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1785441600,
+            "to_epoch": 1785448800,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1785528000,
+            "to_epoch": 1785715200,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 51,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1785787200,
+            "to_epoch": 1785794400,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1785873600,
+            "to_epoch": 1785880800,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1785960000,
+            "to_epoch": 1785967200,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1786046400,
+            "to_epoch": 1786053600,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1786132800,
+            "to_epoch": 1786320000,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 51,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1786392000,
+            "to_epoch": 1786399200,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1786478400,
+            "to_epoch": 1786485600,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1786564800,
+            "to_epoch": 1786572000,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1786651200,
+            "to_epoch": 1786658400,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1786737600,
+            "to_epoch": 1786924800,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 51,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1786996800,
+            "to_epoch": 1787004000,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1787083200,
+            "to_epoch": 1787090400,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1787169600,
+            "to_epoch": 1787176800,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1787256000,
+            "to_epoch": 1787263200,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1787342400,
+            "to_epoch": 1787529600,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 51,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1787601600,
+            "to_epoch": 1787608800,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1787688000,
+            "to_epoch": 1787695200,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1787774400,
+            "to_epoch": 1787781600,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1787860800,
+            "to_epoch": 1787868000,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1787947200,
+            "to_epoch": 1788134400,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 51,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1788206400,
+            "to_epoch": 1788213600,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1788292800,
+            "to_epoch": 1788300000,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1788379200,
+            "to_epoch": 1788386400,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1788465600,
+            "to_epoch": 1788472800,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1788552000,
+            "to_epoch": 1788739200,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 51,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1788804000,
+            "to_epoch": 1788825600,
+            "gap_seconds": 21600,
+            "missing_intervals_estimate": 5,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1788897600,
+            "to_epoch": 1788904800,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1788984000,
+            "to_epoch": 1788991200,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1789070400,
+            "to_epoch": 1789077600,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1789156800,
+            "to_epoch": 1789344000,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 51,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1789416000,
+            "to_epoch": 1789423200,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1789502400,
+            "to_epoch": 1789509600,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1789588800,
+            "to_epoch": 1789596000,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1789675200,
+            "to_epoch": 1789682400,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1789761600,
+            "to_epoch": 1789948800,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 51,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1790020800,
+            "to_epoch": 1790028000,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1790107200,
+            "to_epoch": 1790114400,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1790193600,
+            "to_epoch": 1790200800,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1790280000,
+            "to_epoch": 1790287200,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1790366400,
+            "to_epoch": 1790553600,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 51,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1790625600,
+            "to_epoch": 1790632800,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1790712000,
+            "to_epoch": 1790719200,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1790798400,
+            "to_epoch": 1790805600,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1790884800,
+            "to_epoch": 1790892000,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1790971200,
+            "to_epoch": 1791158400,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 51,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1791230400,
+            "to_epoch": 1791237600,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1791316800,
+            "to_epoch": 1791324000,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1791403200,
+            "to_epoch": 1791410400,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1791489600,
+            "to_epoch": 1791496800,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1791576000,
+            "to_epoch": 1791763200,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 51,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1791835200,
+            "to_epoch": 1791842400,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1791921600,
+            "to_epoch": 1791928800,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1792008000,
+            "to_epoch": 1792015200,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1792094400,
+            "to_epoch": 1792101600,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1792180800,
+            "to_epoch": 1792368000,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 51,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1792440000,
+            "to_epoch": 1792447200,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1792526400,
+            "to_epoch": 1792533600,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1792612800,
+            "to_epoch": 1792620000,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1792699200,
+            "to_epoch": 1792706400,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1792785600,
+            "to_epoch": 1792972800,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 51,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1793044800,
+            "to_epoch": 1793052000,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1793131200,
+            "to_epoch": 1793138400,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1793217600,
+            "to_epoch": 1793224800,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1793304000,
+            "to_epoch": 1793311200,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1793390400,
+            "to_epoch": 1793577600,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 51,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1793653200,
+            "to_epoch": 1793660400,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1793739600,
+            "to_epoch": 1793746800,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1793826000,
+            "to_epoch": 1793833200,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1793912400,
+            "to_epoch": 1793919600,
+            "gap_seconds": 7200,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1793995200,
+            "to_epoch": 1794182400,
+            "gap_seconds": 187200,
+            "missing_intervals_estimate": 51,
+            "classification": "EXTENDED_GAP"
+          }
+        ],
+        "rejected_candles": [
+          {
+            "reason": "Timestamp not aligned to timeframe",
+            "candle": {
+              "epoch": 1767344970,
+              "open": 4390.74,
+              "high": 4391.66,
+              "low": 4383.52,
+              "close": 4385.12
+            }
+          },
+          {
+            "reason": "Timestamp not aligned to timeframe",
+            "candle": {
+              "epoch": 1767845371,
+              "open": 4438.36,
+              "high": 4440.65,
+              "low": 4430.36,
+              "close": 4431.68
+            }
+          },
+          {
+            "reason": "Timestamp not aligned to timeframe",
+            "candle": {
+              "epoch": 1769054972,
+              "open": 4799.23,
+              "high": 4800.39,
+              "low": 4794.04,
+              "close": 4797.52
+            }
+          },
+          {
+            "reason": "Timestamp not aligned to timeframe",
+            "candle": {
+              "epoch": 1770854973,
+              "open": 5059.75,
+              "high": 5066.57,
+              "low": 5050.15,
+              "close": 5063.1
+            }
+          },
+          {
+            "reason": "Timestamp not aligned to timeframe",
+            "candle": {
+              "epoch": 1772654974,
+              "open": 5130.16,
+              "high": 5146.66,
+              "low": 5124.3,
+              "close": 5135.19
+            }
+          },
+          {
+            "reason": "Timestamp not aligned to timeframe",
+            "candle": {
+              "epoch": 1774454975,
+              "open": 4560.82,
+              "high": 4562.2,
+              "low": 4545.49,
+              "close": 4555.42
+            }
+          },
+          {
+            "reason": "Timestamp not aligned to timeframe",
+            "candle": {
+              "epoch": 1776254976,
+              "open": 4812.4,
+              "high": 4816.27,
+              "low": 4808.57,
+              "close": 4811.72
+            }
+          },
+          {
+            "reason": "Timestamp not aligned to timeframe",
+            "candle": {
+              "epoch": 1778054977,
+              "open": 4677.46,
+              "high": 4702.04,
+              "low": 4671.8,
+              "close": 4700.05
+            }
+          },
+          {
+            "reason": "Timestamp not aligned to timeframe",
+            "candle": {
+              "epoch": 1779854978,
+              "open": 4501.67,
+              "high": 4517.37,
+              "low": 4498.12,
+              "close": 4510.13
+            }
+          },
+          {
+            "reason": "Timestamp not aligned to timeframe",
+            "candle": {
+              "epoch": 1781654979,
+              "open": 4337.94,
+              "high": 4341.68,
+              "low": 4332.75,
+              "close": 4337.14
+            }
+          },
+          {
+            "reason": "Timestamp not aligned to timeframe",
+            "candle": {
+              "epoch": 1783454980,
+              "open": 4114.28,
+              "high": 4115.88,
+              "low": 4103.62,
+              "close": 4106.24
+            }
+          },
+          {
+            "reason": "Timestamp not aligned to timeframe",
+            "candle": {
+              "epoch": 1785254981,
+              "open": 4043.94,
+              "high": 4045.93,
+              "low": 4036.78,
+              "close": 4037.67
+            }
+          },
+          {
+            "reason": "Timestamp not aligned to timeframe",
+            "candle": {
+              "epoch": 1787054982,
+              "open": 4391.08,
+              "high": 4400.66,
+              "low": 4390.13,
+              "close": 4395.01
+            }
+          },
+          {
+            "reason": "Timestamp not aligned to timeframe",
+            "candle": {
+              "epoch": 1788854983,
+              "open": 4388.72,
+              "high": 4398.71,
+              "low": 4388.07,
+              "close": 4394.17
+            }
+          },
+          {
+            "reason": "Timestamp not aligned to timeframe",
+            "candle": {
+              "epoch": 1790654984,
+              "open": 4131.49,
+              "high": 4132.33,
+              "low": 4124.86,
+              "close": 4126.81
+            }
+          },
+          {
+            "reason": "Timestamp not aligned to timeframe",
+            "candle": {
+              "epoch": 1792454985,
+              "open": 4139.14,
+              "high": 4139.45,
+              "low": 4129.59,
+              "close": 4131.26
+            }
+          }
+        ],
+        "invalid_ohlc_candles": []
+      }
+    },
+    "15M": {
+      "requested": 5000,
+      "received": 4988,
+      "raw_received": 5000,
+      "pages_fetched": 14,
+      "data_quality": {
+        "timeframe": "15M",
+        "granularity_seconds": 900,
+        "raw_received": 5000,
+        "valid_received": 4988,
+        "excluded_count": 12,
+        "duplicate_count": 0,
+        "misaligned_count": 12,
+        "invalid_ohlc_count": 0,
+        "gap_count": 55,
+        "gaps": [
+          {
+            "from_epoch": 1787604300,
+            "to_epoch": 1787608800,
+            "gap_seconds": 4500,
+            "missing_intervals_estimate": 4,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1787690700,
+            "to_epoch": 1787695200,
+            "gap_seconds": 4500,
+            "missing_intervals_estimate": 4,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1787777100,
+            "to_epoch": 1787781600,
+            "gap_seconds": 4500,
+            "missing_intervals_estimate": 4,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1787863500,
+            "to_epoch": 1787868000,
+            "gap_seconds": 4500,
+            "missing_intervals_estimate": 4,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1787949900,
+            "to_epoch": 1788134400,
+            "gap_seconds": 184500,
+            "missing_intervals_estimate": 204,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1788209100,
+            "to_epoch": 1788213600,
+            "gap_seconds": 4500,
+            "missing_intervals_estimate": 4,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1788295500,
+            "to_epoch": 1788300000,
+            "gap_seconds": 4500,
+            "missing_intervals_estimate": 4,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1788381900,
+            "to_epoch": 1788386400,
+            "gap_seconds": 4500,
+            "missing_intervals_estimate": 4,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1788468300,
+            "to_epoch": 1788472800,
+            "gap_seconds": 4500,
+            "missing_intervals_estimate": 4,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1788554700,
+            "to_epoch": 1788739200,
+            "gap_seconds": 184500,
+            "missing_intervals_estimate": 204,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1788805800,
+            "to_epoch": 1788825600,
+            "gap_seconds": 19800,
+            "missing_intervals_estimate": 21,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1788900300,
+            "to_epoch": 1788904800,
+            "gap_seconds": 4500,
+            "missing_intervals_estimate": 4,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1788986700,
+            "to_epoch": 1788991200,
+            "gap_seconds": 4500,
+            "missing_intervals_estimate": 4,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1789073100,
+            "to_epoch": 1789077600,
+            "gap_seconds": 4500,
+            "missing_intervals_estimate": 4,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1789159500,
+            "to_epoch": 1789344000,
+            "gap_seconds": 184500,
+            "missing_intervals_estimate": 204,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1789418700,
+            "to_epoch": 1789423200,
+            "gap_seconds": 4500,
+            "missing_intervals_estimate": 4,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1789505100,
+            "to_epoch": 1789509600,
+            "gap_seconds": 4500,
+            "missing_intervals_estimate": 4,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1789591500,
+            "to_epoch": 1789596000,
+            "gap_seconds": 4500,
+            "missing_intervals_estimate": 4,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1789677900,
+            "to_epoch": 1789682400,
+            "gap_seconds": 4500,
+            "missing_intervals_estimate": 4,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1789764300,
+            "to_epoch": 1789948800,
+            "gap_seconds": 184500,
+            "missing_intervals_estimate": 204,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1790023500,
+            "to_epoch": 1790028000,
+            "gap_seconds": 4500,
+            "missing_intervals_estimate": 4,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1790109900,
+            "to_epoch": 1790114400,
+            "gap_seconds": 4500,
+            "missing_intervals_estimate": 4,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1790196300,
+            "to_epoch": 1790200800,
+            "gap_seconds": 4500,
+            "missing_intervals_estimate": 4,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1790282700,
+            "to_epoch": 1790287200,
+            "gap_seconds": 4500,
+            "missing_intervals_estimate": 4,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1790369100,
+            "to_epoch": 1790553600,
+            "gap_seconds": 184500,
+            "missing_intervals_estimate": 204,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1790628300,
+            "to_epoch": 1790632800,
+            "gap_seconds": 4500,
+            "missing_intervals_estimate": 4,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1790714700,
+            "to_epoch": 1790719200,
+            "gap_seconds": 4500,
+            "missing_intervals_estimate": 4,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1790801100,
+            "to_epoch": 1790805600,
+            "gap_seconds": 4500,
+            "missing_intervals_estimate": 4,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1790887500,
+            "to_epoch": 1790892000,
+            "gap_seconds": 4500,
+            "missing_intervals_estimate": 4,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1790973900,
+            "to_epoch": 1791158400,
+            "gap_seconds": 184500,
+            "missing_intervals_estimate": 204,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1791233100,
+            "to_epoch": 1791237600,
+            "gap_seconds": 4500,
+            "missing_intervals_estimate": 4,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1791319500,
+            "to_epoch": 1791324000,
+            "gap_seconds": 4500,
+            "missing_intervals_estimate": 4,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1791405900,
+            "to_epoch": 1791410400,
+            "gap_seconds": 4500,
+            "missing_intervals_estimate": 4,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1791492300,
+            "to_epoch": 1791496800,
+            "gap_seconds": 4500,
+            "missing_intervals_estimate": 4,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1791578700,
+            "to_epoch": 1791763200,
+            "gap_seconds": 184500,
+            "missing_intervals_estimate": 204,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1791837900,
+            "to_epoch": 1791842400,
+            "gap_seconds": 4500,
+            "missing_intervals_estimate": 4,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1791924300,
+            "to_epoch": 1791928800,
+            "gap_seconds": 4500,
+            "missing_intervals_estimate": 4,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1792010700,
+            "to_epoch": 1792015200,
+            "gap_seconds": 4500,
+            "missing_intervals_estimate": 4,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1792097100,
+            "to_epoch": 1792101600,
+            "gap_seconds": 4500,
+            "missing_intervals_estimate": 4,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1792183500,
+            "to_epoch": 1792368000,
+            "gap_seconds": 184500,
+            "missing_intervals_estimate": 204,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1792442700,
+            "to_epoch": 1792447200,
+            "gap_seconds": 4500,
+            "missing_intervals_estimate": 4,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1792529100,
+            "to_epoch": 1792533600,
+            "gap_seconds": 4500,
+            "missing_intervals_estimate": 4,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1792615500,
+            "to_epoch": 1792620000,
+            "gap_seconds": 4500,
+            "missing_intervals_estimate": 4,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1792701900,
+            "to_epoch": 1792706400,
+            "gap_seconds": 4500,
+            "missing_intervals_estimate": 4,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1792788300,
+            "to_epoch": 1792972800,
+            "gap_seconds": 184500,
+            "missing_intervals_estimate": 204,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1793047500,
+            "to_epoch": 1793052000,
+            "gap_seconds": 4500,
+            "missing_intervals_estimate": 4,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1793133900,
+            "to_epoch": 1793138400,
+            "gap_seconds": 4500,
+            "missing_intervals_estimate": 4,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1793220300,
+            "to_epoch": 1793224800,
+            "gap_seconds": 4500,
+            "missing_intervals_estimate": 4,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1793306700,
+            "to_epoch": 1793311200,
+            "gap_seconds": 4500,
+            "missing_intervals_estimate": 4,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1793393100,
+            "to_epoch": 1793577600,
+            "gap_seconds": 184500,
+            "missing_intervals_estimate": 204,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1793655900,
+            "to_epoch": 1793660400,
+            "gap_seconds": 4500,
+            "missing_intervals_estimate": 4,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1793742300,
+            "to_epoch": 1793746800,
+            "gap_seconds": 4500,
+            "missing_intervals_estimate": 4,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1793828700,
+            "to_epoch": 1793833200,
+            "gap_seconds": 4500,
+            "missing_intervals_estimate": 4,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1793915100,
+            "to_epoch": 1793919600,
+            "gap_seconds": 4500,
+            "missing_intervals_estimate": 4,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1793997900,
+            "to_epoch": 1794182400,
+            "gap_seconds": 184500,
+            "missing_intervals_estimate": 204,
+            "classification": "EXTENDED_GAP"
+          }
+        ],
+        "rejected_candles": [
+          {
+            "reason": "Timestamp not aligned to timeframe",
+            "candle": {
+              "epoch": 1787586296,
+              "open": 4660.8,
+              "high": 4660.93,
+              "low": 4660.8,
+              "close": 4660.93
+            }
+          },
+          {
+            "reason": "Timestamp not aligned to timeframe",
+            "candle": {
+              "epoch": 1787907597,
+              "open": 4602.98,
+              "high": 4602.98,
+              "low": 4602.96,
+              "close": 4602.98
+            }
+          },
+          {
+            "reason": "Timestamp not aligned to timeframe",
+            "candle": {
+              "epoch": 1788443998,
+              "open": 4470.93,
+              "high": 4470.97,
+              "low": 4470.93,
+              "close": 4470.97
+            }
+          },
+          {
+            "reason": "Timestamp not aligned to timeframe",
+            "candle": {
+              "epoch": 1788893999,
+              "open": 4375.45,
+              "high": 4375.45,
+              "low": 4375.45,
+              "close": 4375.45
+            }
+          },
+          {
+            "reason": "Timestamp not aligned to timeframe",
+            "candle": {
+              "epoch": 1789704587,
+              "open": 4359.45,
+              "high": 4360.32,
+              "low": 4357.02,
+              "close": 4357.02
+            }
+          },
+          {
+            "reason": "Timestamp not aligned to timeframe",
+            "candle": {
+              "epoch": 1790327388,
+              "open": 4296.87,
+              "high": 4297.56,
+              "low": 4294.19,
+              "close": 4294.19
+            }
+          },
+          {
+            "reason": "Timestamp not aligned to timeframe",
+            "candle": {
+              "epoch": 1790950189,
+              "open": 4185.16,
+              "high": 4189.53,
+              "low": 4179.8,
+              "close": 4188.82
+            }
+          },
+          {
+            "reason": "Timestamp not aligned to timeframe",
+            "candle": {
+              "epoch": 1791572990,
+              "open": 4198.89,
+              "high": 4199.96,
+              "low": 4197.47,
+              "close": 4197.7
+            }
+          },
+          {
+            "reason": "Timestamp not aligned to timeframe",
+            "candle": {
+              "epoch": 1792109391,
+              "open": 4154.87,
+              "high": 4156.05,
+              "low": 4153.62,
+              "close": 4155.21
+            }
+          },
+          {
+            "reason": "Timestamp not aligned to timeframe",
+            "candle": {
+              "epoch": 1792732192,
+              "open": 4011.97,
+              "high": 4016.1,
+              "low": 4011.76,
+              "close": 4015.14
+            }
+          },
+          {
+            "reason": "Timestamp not aligned to timeframe",
+            "candle": {
+              "epoch": 1793354993,
+              "open": 3988.23,
+              "high": 3988.23,
+              "low": 3982.7,
+              "close": 3982.77
+            }
+          },
+          {
+            "reason": "Timestamp not aligned to timeframe",
+            "candle": {
+              "epoch": 1793804994,
+              "open": 4034.56,
+              "high": 4038.52,
+              "low": 4032.62,
+              "close": 4032.62
+            }
+          }
+        ],
+        "invalid_ohlc_candles": []
+      }
+    },
+    "5M": {
+      "requested": 5000,
+      "received": 4990,
+      "raw_received": 5000,
+      "pages_fetched": 12,
+      "data_quality": {
+        "timeframe": "5M",
+        "granularity_seconds": 300,
+        "raw_received": 5000,
+        "valid_received": 4990,
+        "excluded_count": 10,
+        "duplicate_count": 0,
+        "misaligned_count": 10,
+        "invalid_ohlc_count": 0,
+        "gap_count": 19,
+        "gaps": [
+          {
+            "from_epoch": 1792011300,
+            "to_epoch": 1792015200,
+            "gap_seconds": 3900,
+            "missing_intervals_estimate": 12,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1792097700,
+            "to_epoch": 1792101600,
+            "gap_seconds": 3900,
+            "missing_intervals_estimate": 12,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1792184100,
+            "to_epoch": 1792368000,
+            "gap_seconds": 183900,
+            "missing_intervals_estimate": 612,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1792443300,
+            "to_epoch": 1792447200,
+            "gap_seconds": 3900,
+            "missing_intervals_estimate": 12,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1792529700,
+            "to_epoch": 1792533600,
+            "gap_seconds": 3900,
+            "missing_intervals_estimate": 12,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1792616100,
+            "to_epoch": 1792620000,
+            "gap_seconds": 3900,
+            "missing_intervals_estimate": 12,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1792702500,
+            "to_epoch": 1792706400,
+            "gap_seconds": 3900,
+            "missing_intervals_estimate": 12,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1792788900,
+            "to_epoch": 1792972800,
+            "gap_seconds": 183900,
+            "missing_intervals_estimate": 612,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1793048100,
+            "to_epoch": 1793052000,
+            "gap_seconds": 3900,
+            "missing_intervals_estimate": 12,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1793134500,
+            "to_epoch": 1793138400,
+            "gap_seconds": 3900,
+            "missing_intervals_estimate": 12,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1793220900,
+            "to_epoch": 1793224800,
+            "gap_seconds": 3900,
+            "missing_intervals_estimate": 12,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1793307300,
+            "to_epoch": 1793311200,
+            "gap_seconds": 3900,
+            "missing_intervals_estimate": 12,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1793393700,
+            "to_epoch": 1793577600,
+            "gap_seconds": 183900,
+            "missing_intervals_estimate": 612,
+            "classification": "EXTENDED_GAP"
+          },
+          {
+            "from_epoch": 1793624100,
+            "to_epoch": 1793624700,
+            "gap_seconds": 600,
+            "missing_intervals_estimate": 1,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1793656500,
+            "to_epoch": 1793660400,
+            "gap_seconds": 3900,
+            "missing_intervals_estimate": 12,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1793742900,
+            "to_epoch": 1793746800,
+            "gap_seconds": 3900,
+            "missing_intervals_estimate": 12,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1793829300,
+            "to_epoch": 1793833200,
+            "gap_seconds": 3900,
+            "missing_intervals_estimate": 12,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1793915700,
+            "to_epoch": 1793919600,
+            "gap_seconds": 3900,
+            "missing_intervals_estimate": 12,
+            "classification": "SHORT_GAP"
+          },
+          {
+            "from_epoch": 1793998500,
+            "to_epoch": 1794182400,
+            "gap_seconds": 183900,
+            "missing_intervals_estimate": 612,
+            "classification": "EXTENDED_GAP"
+          }
+        ],
+        "rejected_candles": [
+          {
+            "reason": "Timestamp not aligned to timeframe",
+            "candle": {
+              "epoch": 1792004993,
+              "open": 4095.13,
+              "high": 4095.25,
+              "low": 4095.13,
+              "close": 4095.21
+            }
+          },
+          {
+            "reason": "Timestamp not aligned to timeframe",
+            "candle": {
+              "epoch": 1792154994,
+              "open": 4176.23,
+              "high": 4176.42,
+              "low": 4176.23,
+              "close": 4176.34
+            }
+          },
+          {
+            "reason": "Timestamp not aligned to timeframe",
+            "candle": {
+              "epoch": 1792454995,
+              "open": 4138.93,
+              "high": 4138.96,
+              "low": 4138.93,
+              "close": 4138.96
+            }
+          },
+          {
+            "reason": "Timestamp not aligned to timeframe",
+            "candle": {
+              "epoch": 1792604996,
+              "open": 4135.12,
+              "high": 4135.15,
+              "low": 4135.1,
+              "close": 4135.1
+            }
+          },
+          {
+            "reason": "Timestamp not aligned to timeframe",
+            "candle": {
+              "epoch": 1792754997,
+              "open": 4027.09,
+              "high": 4027.13,
+              "low": 4027.06,
+              "close": 4027.13
+            }
+          },
+          {
+            "reason": "Timestamp not aligned to timeframe",
+            "candle": {
+              "epoch": 1793054998,
+              "open": 4014.16,
+              "high": 4014.16,
+              "low": 4014.1,
+              "close": 4014.1
+            }
+          },
+          {
+            "reason": "Timestamp not aligned to timeframe",
+            "candle": {
+              "epoch": 1793204999,
+              "open": 4040.39,
+              "high": 4040.39,
+              "low": 4040.39,
+              "close": 4040.39
+            }
+          },
+          {
+            "reason": "Timestamp not aligned to timeframe",
+            "candle": {
+              "epoch": 1793655001,
+              "open": 3945.86,
+              "high": 3946.31,
+              "low": 3944.36,
+              "close": 3944.88
+            }
+          },
+          {
+            "reason": "Timestamp not aligned to timeframe",
+            "candle": {
+              "epoch": 1793805002,
+              "open": 4034.28,
+              "high": 4038.52,
+              "low": 4032.62,
+              "close": 4032.62
+            }
+          },
+          {
+            "reason": "Timestamp not aligned to timeframe",
+            "candle": {
+              "epoch": 1793955003,
+              "open": 4072.8,
+              "high": 4074.76,
+              "low": 4069.02,
+              "close": 4073.3
+            }
+          }
+        ],
+        "invalid_ohlc_candles": []
+      }
+    }
+  }
+}
