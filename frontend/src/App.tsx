@@ -30,6 +30,8 @@ function App() {
   const [historyRecords, setHistoryRecords] = useState<any[]>([])
   const [historySummary, setHistorySummary] = useState<any>({})
   const [historyLoading, setHistoryLoading] = useState(false)
+  const [historyPage, setHistoryPage] = useState(1)
+  const [historyPages, setHistoryPages] = useState(1)
 
 
   useEffect(() => {
@@ -41,16 +43,6 @@ function App() {
         const result = await fetchPrecisionSignal()
         if (active) {
           setMarketData(result)
-          try {
-            const historyResponse = await fetch(`${REVAI_API}/api/signals/history`)
-            if (historyResponse.ok) {
-              const history = await historyResponse.json()
-              setHistoryRecords(history.records ?? [])
-              setHistorySummary(history.summary ?? {})
-            }
-          } catch (historyError) {
-            console.error('Unable to refresh signal history:', historyError)
-          }
           setApiError('')
         }
       } catch (error) {
@@ -72,6 +64,34 @@ function App() {
       clearTimeout(timer)
     }
   }, [])
+
+  useEffect(() => {
+    let active = true
+
+    const loadHistory = async () => {
+      setHistoryLoading(true)
+      try {
+        const response = await fetch(
+          `${REVAI_API}/api/signals/history?page=${historyPage}`
+        )
+        if (!response.ok) throw new Error('History request failed')
+
+        const data = await response.json()
+        if (active) {
+          setHistoryRecords(data.records ?? [])
+          setHistorySummary(data.summary ?? {})
+          setHistoryPages(Math.max(1, data.pages ?? 1))
+        }
+      } catch (error) {
+        if (active) console.error('Unable to load signal history:', error)
+      } finally {
+        if (active) setHistoryLoading(false)
+      }
+    }
+
+    loadHistory()
+    return () => { active = false }
+  }, [historyPage])
 
   const timeframeSignals = marketData?.signals ?? {}
   const formatPrice = (value?: number) =>
@@ -388,11 +408,12 @@ function App() {
                     onClick={async () => {
                       setHistoryLoading(true)
                       try {
-                        const response = await fetch(`${REVAI_API}/api/signals/history`)
+                        const response = await fetch(`${REVAI_API}/api/signals/history?page=${historyPage}`)
                         if (!response.ok) throw new Error('History request failed')
                         const data = await response.json()
                         setHistoryRecords(data.records ?? [])
                         setHistorySummary(data.summary ?? {})
+                        setHistoryPages(Math.max(1, data.pages ?? 1))
                       } catch {
                         notify('Unable to refresh signal history')
                       } finally {
@@ -450,6 +471,22 @@ function App() {
                       )}
                     </tbody>
                   </table>
+                </div>
+
+                <div className="history-pagination">
+                  <button
+                    disabled={historyPage <= 1 || historyLoading}
+                    onClick={() => setHistoryPage(page => Math.max(1, page - 1))}
+                  >
+                    Previous
+                  </button>
+                  <span>Page {historyPage} of {historyPages}</span>
+                  <button
+                    disabled={historyPage >= historyPages || historyLoading}
+                    onClick={() => setHistoryPage(page => Math.min(historyPages, page + 1))}
+                  >
+                    Next
+                  </button>
                 </div>
               </div>
             </section>

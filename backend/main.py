@@ -252,7 +252,10 @@ app = FastAPI(title="RevAI API", version="1.0.0")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=[
+        "http://localhost:5173",
+        "https://rev-ai-gilt.vercel.app",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -394,17 +397,29 @@ async def precision_signal():
 
 
 @app.get("/api/signals/history")
-async def signal_history(limit: int = 200):
+async def signal_history(page: int = 1):
     init_history_db()
-    limit = max(1, min(limit, 500))
+
+    limit = 10
+    page = max(1, page)
+    offset = (page - 1) * limit
 
     with sqlite3.connect(HISTORY_DB) as db:
         db.row_factory = sqlite3.Row
+
+        total = db.execute(
+            "SELECT COUNT(*) FROM signal_history"
+        ).fetchone()[0]
+
+        pages = max(1, (total + limit - 1) // limit)
+        page = min(page, pages)
+        offset = (page - 1) * limit
+
         rows = db.execute("""
             SELECT * FROM signal_history
             ORDER BY issued_at DESC
-            LIMIT ?
-        """, (limit,)).fetchall()
+            LIMIT ? OFFSET ?
+        """, (limit, offset)).fetchall()
 
         records = [dict(row) for row in rows]
 
@@ -424,7 +439,10 @@ async def signal_history(limit: int = 200):
 
     return {
         "symbol": "XAU/USD",
-        "total": summary["total"] or 0,
+        "total": total,
+        "page": page,
+        "limit": limit,
+        "pages": pages,
         "summary": dict(summary),
         "records": records
     }
