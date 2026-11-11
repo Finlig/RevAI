@@ -1,13 +1,13 @@
-
 import asyncio
+import copy
 import json
 import math
+import time
 import websockets
 
 from typing import Any, Optional
 
 DERIV_WS_URL = "wss://api.derivws.com/trading/v1/options/ws/public"
-
 GOLD_SYMBOL = "frxXAUUSD"
 
 TIMEFRAMES = {
@@ -22,31 +22,33 @@ PAGE_SIZE = 500
 MAX_PAGES = 20
 EXTENDED_GAP_SECONDS = 6 * 60 * 60
 
+# Shorter cache lifetimes for faster-moving candles.
+CACHE_TTL_SECONDS = {
+    "5M": 30,
+    "15M": 60,
+    "1H": 120,
+    "4H": 300,
+    "1D": 600,
+}
+
+_candle_cache: dict[tuple[str, int], tuple[float, dict[str, Any]]] = {}
+_candle_locks: dict[tuple[str, int], asyncio.Lock] = {}
+
 
 async def _receive_response(
     websocket: Any,
     req_id: int,
     timeout: int = 30,
 ) -> dict[str, Any]:
-
     while True:
-        message = await asyncio.wait_for(
-            websocket.recv(),
-            timeout=timeout,
-        )
-
+        message = await asyncio.wait_for(websocket.recv(), timeout=timeout)
         response = json.loads(message)
 
         if response.get("req_id") == req_id:
-
             if "error" in response:
                 raise RuntimeError(
-                    response["error"].get(
-                        "message",
-                        "Deriv API error"
-                    )
+                    response["error"].get("message", "Deriv API error")
                 )
-
             return response
 
 
@@ -54,24 +56,19 @@ def validate_candles(
     candles: list[dict[str, Any]],
     timeframe: str,
 ) -> dict[str, Any]:
-
     granularity = TIMEFRAMES[timeframe]
-
     unique_candles = {}
     duplicate_count = 0
     misaligned_candles = []
     invalid_ohlc_candles = []
 
     for candle in candles:
-
         try:
             epoch = int(candle["epoch"])
-
             open_price = float(candle["open"])
             high_price = float(candle["high"])
             low_price = float(candle["low"])
             close_price = float(candle["close"])
-
         except (KeyError, TypeError, ValueError, OverflowError):
             invalid_ohlc_candles.append({
                 "reason": "Missing or invalid candle fields",
@@ -79,12 +76,7 @@ def validate_candles(
             })
             continue
 
-        prices = [
-            open_price,
-            high_price,
-            low_price,
-            close_price,
-        ]
+        prices = [open_price, high_price, low_price, close_price]
 
         if not all(math.isfinite(price) for price in prices):
             invalid_ohlc_candles.append({
@@ -122,7 +114,6 @@ def validate_candles(
     rejected_candles = []
 
     for epoch in sorted(unique_candles):
-
         candle = unique_candles[epoch]
 
         if epoch % granularity != 0:
@@ -138,25 +129,17 @@ def validate_candles(
     gaps = []
 
     for index in range(1, len(valid_candles)):
-
         previous_epoch = valid_candles[index - 1]["epoch"]
         current_epoch = valid_candles[index]["epoch"]
-
         difference = current_epoch - previous_epoch
 
         if difference > granularity:
-
-            missing_intervals = max(
-                0,
-                (difference // granularity) - 1,
-            )
-
+            missing_intervals = max(0, (difference // granularity) - 1)
             gap_type = (
                 "EXTENDED_GAP"
                 if difference >= EXTENDED_GAP_SECONDS
                 else "SHORT_GAP"
             )
-
             gaps.append({
                 "from_epoch": previous_epoch,
                 "to_epoch": current_epoch,
@@ -172,10 +155,7 @@ def validate_candles(
             "granularity_seconds": granularity,
             "raw_received": len(candles),
             "valid_received": len(valid_candles),
-            "excluded_count": (
-                len(rejected_candles)
-                + len(invalid_ohlc_candles)
-            ),
+            "excluded_count": len(rejected_candles) + len(invalid_ohlc_candles),
             "duplicate_count": duplicate_count,
             "misaligned_count": len(misaligned_candles),
             "invalid_ohlc_count": len(invalid_ohlc_candles),
@@ -187,19 +167,11 @@ def validate_candles(
     }
 
 
-async def get_gold_candles(
+async def _fetch_gold_candles(
     timeframe: str,
     count: int = 500,
 ) -> dict[str, Any]:
-
-    if timeframe not in TIMEFRAMES:
-        raise ValueError("Unsupported timeframe")
-
-    if count < 1:
-        raise ValueError("Count must be greater than zero")
-
     granularity = TIMEFRAMES[timeframe]
-
     all_candles = {}
     cursor: Optional[int] = None
     pages = 0
@@ -211,77 +183,46 @@ async def get_gold_candles(
         ping_interval=20,
         ping_timeout=20,
     ) as websocket:
-
         while len(all_candles) < count:
-
             if pages >= MAX_PAGES:
                 break
 
             remaining = count - len(all_candles)
-
-            batch_size = min(
-                PAGE_SIZE,
-                remaining,
-            )
-
+            batch_size = min(PAGE_SIZE, remaining)
             req_id = pages + 1
 
             request = {
                 "ticks_history": GOLD_SYMBOL,
                 "count": batch_size,
-                "end": (
-                    cursor
-                    if cursor is not None
-                    else "latest"
-                ),
+                "end": cursor if cursor is not None else "latest",
                 "style": "candles",
                 "granularity": granularity,
                 "req_id": req_id,
             }
 
             await websocket.send(json.dumps(request))
-
-            response = await _receive_response(
-                websocket,
-                req_id,
-            )
-
+            response = await _receive_response(websocket, req_id)
             candles = response.get("candles", [])
 
             if not candles:
                 break
 
             new_candles = 0
-
             for candle in candles:
-
                 epoch = int(candle["epoch"])
-
                 if epoch not in all_candles:
                     all_candles[epoch] = candle
                     new_candles += 1
 
             pages += 1
-
             if new_candles == 0:
                 break
 
-            oldest_epoch = min(
-                int(candle["epoch"])
-                for candle in candles
-            )
-
+            oldest_epoch = min(int(candle["epoch"]) for candle in candles)
             cursor = oldest_epoch - 1
 
-    raw_candles = [
-        all_candles[epoch]
-        for epoch in sorted(all_candles)
-    ]
-
-    validation = validate_candles(
-        raw_candles,
-        timeframe,
-    )
+    raw_candles = [all_candles[epoch] for epoch in sorted(all_candles)]
+    validation = validate_candles(raw_candles, timeframe)
 
     return {
         "symbol": GOLD_SYMBOL,
@@ -290,27 +231,53 @@ async def get_gold_candles(
         "received": len(validation["candles"]),
         "raw_received": len(raw_candles),
         "pages_fetched": pages,
-
-        # Reaching the requested count does not prove
-        # that Deriv has additional historical candles.
+        # Reaching the requested count does not prove that Deriv has more history.
         "has_more_history": None,
-
         "candles": validation["candles"],
         "data_quality": validation["data_quality"],
     }
 
 
+async def get_gold_candles(
+    timeframe: str,
+    count: int = 500,
+) -> dict[str, Any]:
+    if timeframe not in TIMEFRAMES:
+        raise ValueError("Unsupported timeframe")
+    if count < 1:
+        raise ValueError("Count must be greater than zero")
+
+    cache_key = (timeframe, count)
+    ttl = CACHE_TTL_SECONDS[timeframe]
+
+    cached = _candle_cache.get(cache_key)
+    if cached is not None:
+        cached_at, cached_result = cached
+        if time.monotonic() - cached_at < ttl:
+            return copy.deepcopy(cached_result)
+
+    lock = _candle_locks.setdefault(cache_key, asyncio.Lock())
+
+    async with lock:
+        # Recheck after acquiring the lock; another request may have refreshed it.
+        cached = _candle_cache.get(cache_key)
+        if cached is not None:
+            cached_at, cached_result = cached
+            if time.monotonic() - cached_at < ttl:
+                return copy.deepcopy(cached_result)
+
+        # Failed fetches are not cached; the exception propagates to the caller.
+        result = await _fetch_gold_candles(timeframe, count)
+        _candle_cache[cache_key] = (time.monotonic(), result)
+        return copy.deepcopy(result)
+
+
 async def get_all_gold_candles(
     count: int = 500,
 ) -> dict[str, Any]:
-
     results = {}
 
     for timeframe in TIMEFRAMES:
-
-        results[timeframe] = await get_gold_candles(
-            timeframe,
-            count=count,
-        )
+        results[timeframe] = await get_gold_candles(timeframe, count=count)
 
     return results
