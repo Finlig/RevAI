@@ -373,27 +373,7 @@ function App() {
                 })}
               </section>
 
-              <section className="lower-grid">
-                <div className="content-panel">
-                  <div className="panel-heading"><div><h3>News and macro intelligence</h3><p>External market catalysts</p></div><Activity size={18} /></div>
-                  <div className="risk-list">
-                    <div><span>Economic news feed</span><strong>Not connected yet</strong></div>
-                    <div><span>US dollar and Treasury yields</span><strong>Awaiting data integration</strong></div>
-                    <div><span>Federal Reserve and inflation events</span><strong>Awaiting data integration</strong></div>
-                    <div><span>News impact assessment</span><strong>Not yet available</strong></div>
-                  </div>
-                </div>
-                <div className="content-panel">
-                  <div className="panel-heading"><div><h3>Next-day outlook</h3><p>Scenario-based forecast for Gold</p></div><Gauge size={18} /></div>
-                  <div className="risk-list">
-                    <div><span>Tomorrow's directional bias</span><strong>Not yet calculated</strong></div>
-                    <div><span>Expected trading range</span><strong>Not yet calculated</strong></div>
-                    <div><span>Bullish and bearish scenarios</span><strong>Awaiting forecast engine</strong></div>
-                    <div><span>Forecast confidence</span><strong>Not yet calibrated</strong></div>
-                  </div>
-                  <p className="metric-foot">RevAI will only publish a forecast when technical and verified news data are available. No direction or price target is being invented.</p>
-                </div>
-              </section>
+              
             </>
           ) : activeNav === 'History' ? (
             <section className="signal-only-page">
