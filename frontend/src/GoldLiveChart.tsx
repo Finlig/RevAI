@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { authFetch } from './revai'
 
 type Timeframe = '5M' | '15M' | '1H' | '4H' | '1D'
 
@@ -39,9 +40,7 @@ function GoldLiveChart({ apiBase }: { apiBase: string }) {
 
     const loadCandles = async () => {
       try {
-        const response = await fetch(
-          `${base}/api/market/gold/${timeframe}`
-        )
+        const response = await authFetch(`${base}/api/market/gold/${timeframe}`)
         if (!response.ok) {
           throw new Error(`Market feed returned HTTP ${response.status}`)
         }

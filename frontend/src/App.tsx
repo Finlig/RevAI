@@ -1,8 +1,9 @@
-import { useEffect, useState } from 'react'
-import { REVAI_API, fetchPrecisionSignal, type PrecisionResponse } from './revai'
+import { useEffect, useState, type FormEvent } from 'react'
+import { REVAI_API, authFetch, fetchPrecisionSignal, type PrecisionResponse } from './revai'
 import GoldLiveChart from './GoldLiveChart'
+import TradingViewGoldChart from './TradingViewGoldChart'
 import {
-  Activity, BarChart3, Bell, CandlestickChart, ChevronDown,
+  Activity, BarChart3, Bell, CandlestickChart,
   ChevronRight, CircleHelp, Clock3, Crosshair, Gauge,
   LayoutDashboard, LockKeyhole, Radio,
   Settings, ShieldCheck, UserRound, Wallet,
@@ -10,7 +11,7 @@ import {
 } from 'lucide-react'
 import './index.css'
 
-const timeframes = ['1D', '4H', '1H', '15M', '5M'] as const
+const timeframes = ['15M'] as const
 
 const navigation = [
   { name: 'Overview', icon: LayoutDashboard },
@@ -32,9 +33,170 @@ function App() {
   const [historyLoading, setHistoryLoading] = useState(false)
   const [historyPage, setHistoryPage] = useState(1)
   const [historyPages, setHistoryPages] = useState(1)
+  const [authReady, setAuthReady] = useState(import.meta.env.DEV)
+  const [accessState, setAccessState] = useState<'login' | 'active' | 'subscription'>(import.meta.env.DEV ? 'active' : 'login')
+  const [authToken, setAuthToken] = useState<string | null>(() => localStorage.getItem('revai_access_token'))
+  const [authUser, setAuthUser] = useState<{ full_name: string; email: string } | null>(null)
+  const [loginEmail, setLoginEmail] = useState('')
+  const [loginPassword, setLoginPassword] = useState('')
+  const [loginBusy, setLoginBusy] = useState(false)
+  const [authError, setAuthError] = useState('')
+  const [authMode, setAuthMode] = useState<'login' | 'signup'>('login')
+  const [signupName, setSignupName] = useState('')
+  const [signupEmail, setSignupEmail] = useState('')
+  const [signupPassword, setSignupPassword] = useState('')
+  const [signupPlanId, setSignupPlanId] = useState('')
+  const [signupPlans, setSignupPlans] = useState<Array<{ id: number; name: string; price_naira: number; duration_value: number; duration_unit: string }>>([])
+  const [signupBusy, setSignupBusy] = useState(false)
+  const [signupMessage, setSignupMessage] = useState('')
+
+  const verifySession = async (token: string) => {
+    const response = await fetch(`${REVAI_API}/api/auth/dashboard-access`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    if (response.status === 403) {
+      setAccessState('subscription')
+      setAuthUser(null)
+      return false
+    }
+    if (!response.ok) throw new Error('Your session has expired. Please sign in again.')
+    const data = await response.json()
+    setAuthUser(data.user)
+    setAccessState('active')
+    return true
+  }
+
+  useEffect(() => {
+    if (import.meta.env.DEV) {
+      setAccessState('active')
+      setAuthReady(true)
+      return
+    }
+
+    let active = true
+    const restore = async () => {
+      const savedToken = localStorage.getItem('revai_access_token')
+      if (!savedToken) {
+        if (active) setAuthReady(true)
+        return
+      }
+      try {
+        await verifySession(savedToken)
+        if (active) setAuthToken(savedToken)
+      } catch {
+        localStorage.removeItem('revai_access_token')
+        if (active) {
+          setAuthToken(null)
+          setAccessState('login')
+        }
+      } finally {
+        if (active) setAuthReady(true)
+      }
+    }
+    restore()
+    return () => { active = false }
+  }, [])
+
+  const handleLogin = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    setLoginBusy(true)
+    setAuthError('')
+    try {
+      const response = await fetch(`${REVAI_API}/api/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: loginEmail, password: loginPassword }),
+      })
+      const data = await response.json()
+      if (!response.ok) throw new Error(data.detail || 'Unable to sign in.')
+      const token = data.access_token as string
+      localStorage.setItem('revai_access_token', token)
+      setAuthToken(token)
+      const hasAccess = await verifySession(token)
+      if (!hasAccess) setAuthError('Your account is signed in, but an active subscription is required to access RevAI.')
+    } catch (error) {
+      localStorage.removeItem('revai_access_token')
+      setAuthToken(null)
+      setAccessState('login')
+      setAuthError(error instanceof Error ? error.message : 'Unable to sign in.')
+    } finally {
+      setLoginBusy(false)
+    }
+  }
+
+  useEffect(() => {
+    if (authMode !== 'signup') return
+    let active = true
+    fetch(`${REVAI_API}/api/auth/plans`)
+      .then(async response => {
+        if (!response.ok) throw new Error('Unable to load subscription plans.')
+        return response.json()
+      })
+      .then(data => {
+        if (!active) return
+        const plans = Array.isArray(data.plans) ? data.plans : []
+        setSignupPlans(plans)
+        if (plans.length) setSignupPlanId(String(plans[0].id))
+      })
+      .catch(error => {
+        if (active) setAuthError(error instanceof Error ? error.message : 'Unable to load subscription plans.')
+      })
+    return () => { active = false }
+  }, [authMode])
+
+  const handleSignup = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    setSignupBusy(true)
+    setAuthError('')
+    setSignupMessage('')
+    try {
+      if (!signupPlanId) throw new Error('Please select a subscription plan.')
+      const response = await fetch(`${REVAI_API}/api/auth/signup`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          full_name: signupName,
+          email: signupEmail,
+          password: signupPassword,
+          plan_id: Number(signupPlanId),
+        }),
+      })
+      const data = await response.json()
+      if (!response.ok) throw new Error(data.detail || 'Unable to create your account.')
+      setSignupMessage(data.message || 'Account created. Complete payment to activate your subscription.')
+      setAuthMode('login')
+      setLoginEmail(signupEmail)
+      setLoginPassword('')
+    } catch (error) {
+      setAuthError(error instanceof Error ? error.message : 'Unable to create your account.')
+    } finally {
+      setSignupBusy(false)
+    }
+  }
+
+  useEffect(() => {
+    const onUnauthorized = () => {
+      setAuthToken(null)
+      setAuthUser(null)
+      setAccessState('login')
+      setApiError('Your session expired. Please sign in again.')
+    }
+    window.addEventListener('revai:unauthorized', onUnauthorized)
+    return () => window.removeEventListener('revai:unauthorized', onUnauthorized)
+  }, [])
+
+  const handleLogout = () => {
+    localStorage.removeItem('revai_access_token')
+    setAuthToken(null)
+    setAuthUser(null)
+    setAccessState('login')
+    setMarketData(null)
+    setHistoryRecords([])
+  }
 
 
   useEffect(() => {
+    if (accessState !== 'active') return
     let active = true
     let timer: ReturnType<typeof setTimeout>
 
@@ -63,17 +225,16 @@ function App() {
       active = false
       clearTimeout(timer)
     }
-  }, [])
+  }, [accessState, authToken])
 
   useEffect(() => {
+    if (accessState !== 'active') return
     let active = true
 
     const loadHistory = async () => {
       setHistoryLoading(true)
       try {
-        const response = await fetch(
-          `${REVAI_API}/api/signals/history?page=${historyPage}`
-        )
+        const response = await authFetch(`${REVAI_API}/api/signals/history?page=${historyPage}`)
         if (!response.ok) throw new Error('History request failed')
 
         const data = await response.json()
@@ -91,9 +252,23 @@ function App() {
 
     loadHistory()
     return () => { active = false }
-  }, [historyPage])
+  }, [historyPage, accessState, authToken])
 
   const timeframeSignals = marketData?.signals ?? {}
+
+  // Dominant market direction comes from the 4H and 1H background trends.
+  const context4h = marketData?.context?.['4H']
+  const context1h = marketData?.context?.['1H']
+  const marketDirection =
+    !context4h?.ready || !context1h?.ready
+      ? 'NOT READY'
+      : context4h.trend === 'BULLISH' && context1h.trend === 'BULLISH'
+        ? 'BULLISH'
+        : context4h.trend === 'BEARISH' && context1h.trend === 'BEARISH'
+          ? 'BEARISH'
+          : 'MIXED'
+  const marketDirectionDetail =
+    `4H: ${context4h?.ready ? context4h.trend : 'WAIT'} · 1H: ${context1h?.ready ? context1h.trend : 'WAIT'}`
   const formatPrice = (value?: number) =>
     value === undefined ? '—' : value.toFixed(2)
   const formatMetric = (value?: number) =>
@@ -180,6 +355,52 @@ function App() {
     </div>
   )
 
+  if (!authReady) {
+    return <div className="auth-screen"><div className="auth-card"><div className="brand-mark"><Activity size={22} /></div><h1>REV<span>AI</span></h1><p>Verifying your secure session…</p></div></div>
+  }
+
+  if (accessState !== 'active') {
+    const authSubmit = authMode === 'signup' ? handleSignup : handleLogin
+    return (
+      <div className="auth-screen">
+        <form className="auth-card" onSubmit={authSubmit}>
+          <div className="auth-logo"><div className="brand-mark"><Activity size={22} /></div><div><strong>REV<span>AI</span></strong><small>GOLD INTELLIGENCE</small></div></div>
+          <p className="auth-eyebrow">SECURE TRADER ACCESS</p>
+          <h1>{accessState === 'subscription' ? 'Subscription required' : authMode === 'signup' ? 'Create your account' : 'Welcome back'}</h1>
+          <p className="auth-description">{accessState === 'subscription' ? 'Your account is authenticated, but it does not have an active subscription. Complete subscription activation to access RevAI.' : authMode === 'signup' ? 'Create your RevAI account and select a subscription plan.' : 'Sign in to access your 15-minute Gold signal dashboard.'}</p>
+          {accessState === 'login' && authMode === 'login' && <>
+            <label>Email address<input type="email" autoComplete="username" value={loginEmail} onChange={event => setLoginEmail(event.target.value)} placeholder="you@example.com" required /></label>
+            <label>Password<input type="password" autoComplete="current-password" value={loginPassword} onChange={event => setLoginPassword(event.target.value)} placeholder="Enter your password" required /></label>
+            {signupMessage && <div className="auth-success" role="status">{signupMessage}</div>}
+            {authError && <div className="auth-error" role="alert">{authError}</div>}
+            <button className="gold-button auth-submit" type="submit" disabled={loginBusy}>{loginBusy ? 'SIGNING IN…' : 'SIGN IN'}</button>
+            <p className="auth-switch">New to RevAI? <button type="button" onClick={() => { setAuthError(''); setSignupMessage(''); setAuthMode('signup') }}>Create an account</button></p>
+          </>}
+          {accessState === 'login' && authMode === 'signup' && <>
+            <label>Full name<input type="text" autoComplete="name" value={signupName} onChange={event => setSignupName(event.target.value)} placeholder="Your full name" minLength={2} required /></label>
+            <label>Email address<input type="email" autoComplete="email" value={signupEmail} onChange={event => setSignupEmail(event.target.value)} placeholder="you@example.com" required /></label>
+            <label>Password<input type="password" autoComplete="new-password" value={signupPassword} onChange={event => setSignupPassword(event.target.value)} placeholder="At least 8 characters" minLength={8} required /></label>
+            <label>Subscription plan
+              <select value={signupPlanId} onChange={event => setSignupPlanId(event.target.value)} required>
+                <option value="">Select a plan</option>
+                {signupPlans.map(plan => <option key={plan.id} value={plan.id}>{plan.name} — ₦{Number(plan.price_naira).toLocaleString()} / {plan.duration_value} {plan.duration_unit}</option>)}
+              </select>
+            </label>
+            {signupPlans.length === 0 && !authError && <p className="auth-description">Loading available plans…</p>}
+            {authError && <div className="auth-error" role="alert">{authError}</div>}
+            <button className="gold-button auth-submit" type="submit" disabled={signupBusy || signupPlans.length === 0}>{signupBusy ? 'CREATING ACCOUNT…' : 'CREATE ACCOUNT'}</button>
+            <p className="auth-switch">Already have an account? <button type="button" onClick={() => { setAuthError(''); setAuthMode('login') }}>Sign in</button></p>
+          </>}
+          {accessState === 'subscription' && <>
+            {authError && <div className="auth-error" role="alert">{authError}</div>}
+            <button className="gold-button auth-submit" type="button" onClick={handleLogout}>SIGN OUT</button>
+          </>}
+          <div className="auth-security"><ShieldCheck size={15} /> Protected by RevAI account authentication</div>
+        </form>
+      </div>
+    )
+  }
+
   return (
     <div className="app-shell">
       <aside className="sidebar">
@@ -214,8 +435,8 @@ function App() {
           </div>
           <div className="profile">
             <div className="avatar">R</div>
-            <div><strong>RevAI Trader</strong><small>Pro workspace</small></div>
-            <ChevronDown size={16} />
+            <div><strong>{authUser?.full_name || 'RevAI Trader'}</strong><small>{authUser?.email || 'Pro workspace'}</small></div>
+            <button className="logout-button" onClick={handleLogout} title="Sign out">Sign out</button>
           </div>
         </div>
       </aside>
@@ -245,7 +466,7 @@ function App() {
                 <div>
                   <div className="eyebrow"><span className="gold-line" /> GOLD MARKET INTELLIGENCE</div>
                   <h1>Market Analysis</h1>
-                  <p className="subtitle">Understand why each Gold timeframe is buying, selling or waiting.</p>
+                  <p className="subtitle">15M generates the trade signal; higher timeframes provide background direction.</p>
                 </div>
                 <button className="date-button"><Clock3 size={16} /> Live market analysis</button>
               </section>
@@ -254,42 +475,47 @@ function App() {
                 <div className="gold-symbol">Au</div>
                 <div className="instrument">
                   <div className="instrument-title">GOLD <span className="symbol-tag">XAU/USD</span></div>
-                  <div className="instrument-sub">Gold / US Dollar <span className="separator">•</span> Independent timeframe analysis</div>
+                  <div className="instrument-sub">Gold / US Dollar <span className="separator">•</span> 15M signal engine</div>
                 </div>
                 <div className="feed-state">
                   <span className={`status-dot ${marketData ? "" : "muted"}`} />
                   {apiError || (marketData ? "Technical feed connected" : "Awaiting market data")}
                 </div>
                 <div className="banner-divider" />
-                <div className="banner-meta"><small>TIMEFRAMES</small><strong>5</strong></div>
-                <div className="banner-meta"><small>ACTIVE SIGNALS</small><strong>{timeframes.filter(tf => ["BUY", "SELL"].includes(timeframeSignals[tf]?.signal)).length}</strong></div>
+                <div className="banner-meta"><small>SIGNAL TIMEFRAME</small><strong>15M</strong></div>
+                <div className="banner-meta"><small>ACTIVE SIGNAL</small><strong>{["BUY", "SELL"].includes(timeframeSignals["15M"]?.signal) ? "1" : "0"}</strong></div>
               </section>
+
+              <TradingViewGoldChart
+                apiBase={REVAI_API}
+                signal={timeframeSignals['15M']}
+              />
 
               <section className="metrics-grid">
                 <div className="metric-card">
                   <div className="metric-top"><span>Current market price</span><Activity size={17} /></div>
-                  <div className="metric-value">{formatPrice(timeframeSignals["5M"]?.analysis?.latest_close ?? timeframeSignals["15M"]?.analysis?.latest_close)} <small>USD</small></div>
+                  <div className="metric-value">{formatPrice(timeframeSignals["15M"]?.analysis?.latest_close)} <small>USD</small></div>
                   <div className="metric-foot">Latest completed candle available</div>
                 </div>
                 <div className="metric-card">
-                  <div className="metric-top"><span>BUY signals</span><Gauge size={17} /></div>
+                  <div className="metric-top"><span>15M BUY signal</span><Gauge size={17} /></div>
                   <div className="metric-value">{timeframes.filter(tf => timeframeSignals[tf]?.signal === "BUY").length}</div>
-                  <div className="metric-foot">Independent bullish timeframe readings</div>
+                  <div className="metric-foot">Primary timeframe direction</div>
                 </div>
                 <div className="metric-card">
-                  <div className="metric-top"><span>SELL signals</span><Crosshair size={17} /></div>
+                  <div className="metric-top"><span>15M SELL signal</span><Crosshair size={17} /></div>
                   <div className="metric-value">{timeframes.filter(tf => timeframeSignals[tf]?.signal === "SELL").length}</div>
-                  <div className="metric-foot">Independent bearish timeframe readings</div>
+                  <div className="metric-foot">Primary timeframe direction</div>
                 </div>
                 <div className="metric-card">
-                  <div className="metric-top"><span>5M volatility</span><Activity size={17} /></div>
-                  <div className="metric-value">{formatMetric(timeframeSignals["5M"]?.analysis?.atr)} <small>ATR</small></div>
-                  <div className="metric-foot">Average true range on 5-minute candles</div>
+                  <div className="metric-top"><span>Market direction</span><Activity size={17} /></div>
+                  <div className="metric-value">{marketDirection}</div>
+                  <div className="metric-foot">{marketDirectionDetail}</div>
                 </div>
               </section>
 
               <section className="section-heading">
-                <div><h2>Why the market is moving</h2><p>Actual indicator checks used by the RevAI signal engine</p></div>
+                <div><h2>15M signal analysis</h2><p>15M qualification checks and background market context</p></div>
                 <div className="scanner-status"><span className={`status-dot ${marketData ? "" : "muted"}`} /> {marketData ? "Diagnostics connected" : "Waiting for feed"}</div>
               </section>
 
@@ -299,20 +525,19 @@ function App() {
                   const details = item?.analysis
                   const direction = item?.signal ?? "WAIT"
                   const checks = direction === "SELL" ? details?.sell_checks : details?.buy_checks
-                  const reasons = direction === "SELL" ? details?.sell_reasons : details?.buy_reasons
 
                   return (
                     <article className="signal-card" key={tf}>
                       <div className="signal-card-header">
                         <div>
                           <span className="signal-timeframe">{tf}</span>
-                          <span className="signal-type">INDEPENDENT TIMEFRAME</span>
+                          <span className="signal-type">PRIMARY SIGNAL</span>
                         </div>
                         <span className="signal-wait">{direction}</span>
                       </div>
 
                       <div className="signal-card-body">
-                        <div className="signal-direction">{direction === "BUY" ? "Bullish direction" : direction === "SELL" ? "Bearish direction" : "No qualified direction"}</div>
+                        <div className="signal-direction">{direction === "BUY" ? "15M BUY setup" : direction === "SELL" ? "15M SELL setup" : "WAIT — no qualified 15M setup"}</div>
                         <p>{item?.reason ?? "Waiting for timeframe data."}</p>
                         <div className="signal-quick-metrics">
                           <div><span>Gold price</span><strong>{formatPrice(details?.latest_close)}</strong></div>
@@ -339,7 +564,7 @@ function App() {
 
                       {checks && (
                         <div className="content-panel">
-                          <div className="panel-heading"><div><h3>{direction} confirmation checks</h3><p>{reasons?.length ?? 0} of 5 conditions passed</p></div><ShieldCheck size={18} /></div>
+                          <div className="panel-heading"><div><h3>{direction} 15M qualification checks</h3><p>{direction === "SELL" ? item?.sell_score ?? 0 : item?.buy_score ?? 0} of 5 conditions passed</p></div><ShieldCheck size={18} /></div>
                           <div className="risk-list">
                             {Object.entries(checks).map(([name, passed]) => (
                               <div key={name}>
@@ -353,7 +578,7 @@ function App() {
 
                       {direction === "WAIT" && (
                         <div className="content-panel">
-                          <div className="panel-heading"><div><h3>What is preventing a signal?</h3><p>Buy and sell confirmation breakdown</p></div><ShieldCheck size={18} /></div>
+                          <div className="panel-heading"><div><h3>Why there is no 15M signal</h3><p>15M scan and 5M entry confirmation status</p></div><ShieldCheck size={18} /></div>
                           <div className="risk-list">
                             <div><span>Buy conditions passed</span><strong>{item?.buy_score ?? "—"}/5</strong></div>
                             <div><span>Sell conditions passed</span><strong>{item?.sell_score ?? "—"}/5</strong></div>
@@ -374,6 +599,31 @@ function App() {
               </section>
 
               
+              <section className="content-panel">
+                <div className="panel-heading">
+                  <div><h3>Background trend and entry confirmation</h3><p>These timeframes support the 15M decision; they do not generate signals.</p></div>
+                  <ShieldCheck size={18} />
+                </div>
+                <div className="risk-list">
+                  {(['1D', '4H', '1H'] as const).map(tf => {
+                    const context = marketData?.context?.[tf]
+                    return (
+                      <div key={tf}>
+                        <span>{tf} background trend</span>
+                        <strong>{context?.ready ? context.trend : 'NOT READY'}</strong>
+                      </div>
+                    )
+                  })}
+                  <div>
+                    <span>5M entry confirmation</span>
+                    <strong>{marketData?.signal?.confirmation_5m?.qualified ? 'PASSED' : 'WAIT'}</strong>
+                  </div>
+                  <div>
+                    <span>5M confirmation checks</span>
+                    <strong>{marketData?.signal?.confirmation_5m?.checks_passed ?? 0}/5</strong>
+                  </div>
+                </div>
+              </section>
             </>
           ) : activeNav === 'History' ? (
             <section className="signal-only-page">
@@ -388,7 +638,7 @@ function App() {
                     onClick={async () => {
                       setHistoryLoading(true)
                       try {
-                        const response = await fetch(`${REVAI_API}/api/signals/history?page=${historyPage}`)
+                        const response = await authFetch(`${REVAI_API}/api/signals/history?page=${historyPage}`)
                         if (!response.ok) throw new Error('History request failed')
                         const data = await response.json()
                         setHistoryRecords(data.records ?? [])
@@ -446,7 +696,7 @@ function App() {
                         </tr>
                       )) : (
                         <tr><td colSpan={10} className="history-no-data">
-                          No signals recorded yet. Qualified BUY and SELL signals will appear here automatically.
+                          No 15M signals recorded yet. Qualified BUY and SELL setups will appear here automatically.
                         </td></tr>
                       )}
                     </tbody>
@@ -483,11 +733,9 @@ function App() {
                     .map((tf) => {
                       const item = timeframeSignals[tf]
                       const isBuy = item.signal === 'BUY'
-                      const higherTf = ({ '4H': '1D', '1H': '4H', '15M': '1H', '5M': '15M' } as Record<string, string>)[tf]
-                      const higherSignal = higherTf ? timeframeSignals[higherTf]?.signal : undefined
-                      const setupType = higherSignal && higherSignal !== item.signal
-                        ? 'COUNTERTREND'
-                        : ['5M', '15M'].includes(tf) ? 'QUICK SCALP' : 'TREND'
+                      const setupType = item.setup_type || 'UNCLASSIFIED SETUP'
+                      const qualityTier = item.quality_tier || item.classification || 'STANDARD'
+                      const marketCondition = item.market_condition || 'CONDITION UNAVAILABLE'
                       const timeframeMs = { '1D': 86400000, '4H': 14400000, '1H': 3600000, '15M': 900000, '5M': 300000 }[tf]
                       const validUntil = new Date((Math.floor(Date.now() / timeframeMs) + 1) * timeframeMs)
                       const confirmationScore = Math.max(item.buy_score ?? 0, item.sell_score ?? 0)
@@ -495,14 +743,17 @@ function App() {
                       return (
                         <article className="qualified-signal-card" key={tf}>
                           <div className="qualified-signal-label">
-                            REVAI GOLD SIGNAL · XAU/USD
+                            REVAI 15M GOLD SIGNAL · XAU/USD
                           </div>
                           <div className="signal-card-badges">
                             <span className="signal-timeframe-badge">{tf}</span>
                             <span className={`signal-action-badge ${isBuy ? 'buy' : 'sell'}`}>
                               {isBuy ? 'BUY NOW' : 'SELL NOW'}
                             </span>
-                            <span className={`signal-setup-badge ${setupType.toLowerCase().replace(' ', '-')}`}>
+                            <span className={`signal-setup-badge ${qualityTier.toLowerCase().replaceAll(' ', '-')}`}>
+                              {qualityTier}
+                            </span>
+                            <span className="signal-setup-badge">
                               {setupType}
                             </span>
                           </div>
@@ -510,7 +761,7 @@ function App() {
                             {formatPrice(item.entry)}
                           </div>
                           <div className="qualified-signal-timeframe">
-                            {tf} INDEPENDENT SIGNAL
+                            15M PRIMARY SIGNAL · {marketCondition}
                           </div>
                           <div className="qualified-signal-levels">
                             <div className="signal-level">
@@ -544,7 +795,7 @@ function App() {
                             <span>VALID UNTIL</span>
                             <strong>{validUntil.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</strong>
                             <span className="signal-confirmation">
-                              {confirmationScore}/5 confirmation checks
+                              {confirmationScore}/5 15M qualification checks
                             </span>
                           </div>
                           <button
@@ -553,7 +804,8 @@ function App() {
                             onClick={() => {
                               const text = [
                                 `REVAI GOLD SIGNAL - XAU/USD`,
-                                `${item.signal} | ${tf} | ${setupType}`,
+                                `${item.signal} | ${tf} | ${setupType} | ${qualityTier}`,
+                                `Market condition: ${marketCondition}`,
                                 `Entry: ${formatPrice(item.entry)}`,
                                 `Stop Loss: ${formatPrice(item.stop_loss)}`,
                                 `TP1: ${formatPrice(item.tp1)}`,
@@ -602,39 +854,39 @@ function App() {
                 </div>
                 <div className="overview-market-price">
                   <span>LATEST AVAILABLE PRICE</span>
-                  <strong>{formatPrice(timeframeSignals['5M']?.analysis?.latest_close ?? timeframeSignals['15M']?.analysis?.latest_close)}</strong>
+                  <strong>{formatPrice(timeframeSignals['15M']?.analysis?.latest_close)}</strong>
                   <small>USD · latest completed candle</small>
                 </div>
               </div>
 
               <div className="overview-metrics">
                 <article className="overview-metric">
-                  <span>ACTIVE TIMEFRAME SIGNALS</span>
-                  <strong>{timeframes.filter(tf => ['BUY', 'SELL'].includes(timeframeSignals[tf]?.signal)).length}<small> / 5</small></strong>
-                  <p>Qualified BUY or SELL readings</p>
+                  <span>ACTIVE 15M SIGNAL</span>
+                  <strong>{['BUY', 'SELL'].includes(timeframeSignals['15M']?.signal) ? 1 : 0}<small> / 1</small></strong>
+                  <p>Qualified primary trade direction</p>
                 </article>
                 <article className="overview-metric">
-                  <span>BUY READINGS</span>
+                  <span>15M BUY READINGS</span>
                   <strong className="overview-buy">{timeframes.filter(tf => timeframeSignals[tf]?.signal === 'BUY').length}</strong>
-                  <p>Independent bullish timeframes</p>
+                  <p>Primary bullish trade direction</p>
                 </article>
                 <article className="overview-metric">
-                  <span>SELL READINGS</span>
+                  <span>15M SELL READINGS</span>
                   <strong className="overview-sell">{timeframes.filter(tf => timeframeSignals[tf]?.signal === 'SELL').length}</strong>
                   <p>Independent bearish timeframes</p>
                 </article>
                 <article className="overview-metric">
-                  <span>5M VOLATILITY</span>
-                  <strong>{formatMetric(timeframeSignals['5M']?.analysis?.atr)}<small> ATR</small></strong>
-                  <p>Average true range · 5-minute</p>
+                  <span>MARKET DIRECTION</span>
+                  <strong>{marketDirection}</strong>
+                  <p>{marketDirectionDetail}</p>
                 </article>
               </div>
 
               <div className="overview-main-grid">
                 <section className="overview-panel">
                   <div className="overview-panel-heading">
-                    <div><h2>Gold Signal Queue</h2><p>Independent timeframe engine · XAU/USD</p></div>
-                    <span className="overview-count">5 TIMEFRAMES</span>
+                    <div><h2>Gold Signal Queue</h2><p>15M signal engine · higher-timeframe context · 5M entry confirmation</p></div>
+                    <span className="overview-count">15M SIGNAL</span>
                   </div>
                   <div className="overview-queue-list">
                     {timeframes.map(tf => {
@@ -682,7 +934,7 @@ function App() {
                   <p className="overview-quality-empty">{apiError || 'Waiting for backend data-quality diagnostics.'}</p>
                 )}
               </section>
-              <div className="overview-footer-note">RevAI can make mistakes. Use proper risk management.</div>
+              <div className="overview-footer-note">1D / 4H / 1H are background context only. 5M confirms entries; only 15M generates signals. RevAI can make mistakes. Use proper risk management.</div>
             </section>
           )}
           <footer><div className="footer-brand">REV<span>AI</span></div><span>Gold intelligence, disciplined execution.</span><span className="disclaimer">RevAI can make mistakes. Use proper risk management.</span></footer>

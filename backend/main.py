@@ -2,17 +2,19 @@ import time
 import sqlite3
 from pathlib import Path
 
+from dotenv import load_dotenv
+load_dotenv(Path(__file__).with_name(".env"))
+
 from backtest import run_backtest
+from backtest_v2 import run_backtest_v2
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 from market_data import (
     get_gold_candles,
     get_all_gold_candles,
-    TIMEFRAMES,
-)
+    TIMEFRAMES)
 
-from signal_engine import analyse_timeframe
 from signal_engine_v2 import analyse_precision_opportunity
 
 
@@ -216,7 +218,9 @@ def record_qualified_signals(signals, candles_by_timeframe, as_of_epoch):
                 if higher_tf else None
             )
 
-            signal_type = (
+            # Store the engine's actual setup label (not a guessed label based
+            # only on timeframe). Keep a fallback for older engine responses.
+            signal_type = item.get("setup_type") or (
                 "COUNTERTREND"
                 if higher_direction in ("BUY", "SELL")
                 and higher_direction != direction
@@ -258,8 +262,7 @@ app.add_middleware(
     ],
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"],
-)
+    allow_headers=["*"])
 
 
 @app.get("/")
@@ -300,32 +303,56 @@ async def all_gold_market_data():
 async def preview_signals():
     try:
         market_data = await get_all_gold_candles()
-
-        signals = {}
-
-        for timeframe, result in market_data.items():
-            signals[timeframe] = analyse_timeframe(
-                result["candles"],
-                timeframe
-            )
-
+        as_of_epoch = int(time.time())
+        candles_by_timeframe = {
+            timeframe: result["candles"]
+            for timeframe, result in market_data.items()
+        }
+        signal = analyse_precision_opportunity(candles_by_timeframe, as_of_epoch)
         return {
             "platform": "RevAI",
             "symbol": "XAU/USD",
             "mode": "RESEARCH_PREVIEW",
-            "signals": signals,
+            "signal": signal,
+            "signals": {"15M": signal},
+            "context": signal.get("context", {}),
+            "note": "15M is the only signal timeframe; 1D/4H/1H are background context and 5M confirms entry.",
         }
-
     except Exception as error:
         raise HTTPException(status_code=502, detail=str(error))
+
+
+@app.get("/api/backtest/precision")
+async def precision_backtest():
+    try:
+        market_data = await get_all_gold_candles(count=1000)
+        candles_by_timeframe = {
+            timeframe: result["candles"]
+            for timeframe, result in market_data.items()
+        }
+        result = run_backtest_v2(candles_by_timeframe)
+        result["market_data"] = {
+            timeframe: {
+                "requested": payload.get("requested"),
+                "received": payload.get("received"),
+                "pages_fetched": payload.get("pages_fetched"),
+                "data_quality": payload.get("data_quality"),
+            }
+            for timeframe, payload in market_data.items()
+        }
+        return result
+    except Exception as error:
+        raise HTTPException(status_code=502, detail=str(error))
+
+
 @app.get("/api/backtest/{timeframe}")
 async def backtest_timeframe(timeframe: str):
     timeframe = timeframe.upper()
 
-    if timeframe not in TIMEFRAMES:
+    if timeframe != "15M":
         raise HTTPException(
             status_code=400,
-            detail="Supported timeframes: 1D, 4H, 1H, 15M, 5M"
+            detail="Only 15M is a signal timeframe. 1D/4H/1H are background context and 5M confirms entries."
         )
 
     try:
@@ -356,17 +383,12 @@ async def precision_signal():
             for timeframe, result in market_data.items()
         }
 
-        from signal_engine import analyse_timeframe
-
-        # Each Gold timeframe generates its own independent signal.
-        signals = {
-            timeframe: analyse_timeframe(
-                candles_by_timeframe.get(timeframe, []),
-                timeframe,
-                as_of_epoch
-            )
-            for timeframe in ("1D", "4H", "1H", "15M", "5M")
-        }
+        # One primary signal only: 15M. The 1D/4H/1H charts are context;
+        # 5M is confirmation and does not create a separate signal.
+        signal = analyse_precision_opportunity(
+            candles_by_timeframe,
+            as_of_epoch)
+        signals = {"15M": signal}
 
         record_qualified_signals(signals, candles_by_timeframe, as_of_epoch)
 
@@ -383,11 +405,15 @@ async def precision_signal():
         return {
             "platform": "RevAI",
             "symbol": "XAU/USD",
-            "engine": "Independent Timeframe Signal Engine",
+            "engine": "ALPHA-aligned 15M Precision Engine",
             "mode": "PAPER_TRADING_PREVIEW",
             "timestamp": as_of_epoch,
+            "signal": signal,
             "signals": signals,
+            "context": signal.get("context", {}),
             "data_quality": data_quality,
+            "signal_timeframe": "15M",
+            "execution_confirmation_timeframe": "5M",
         }
 
     except HTTPException:
@@ -408,7 +434,7 @@ async def signal_history(page: int = 1):
         db.row_factory = sqlite3.Row
 
         total = db.execute(
-            "SELECT COUNT(*) FROM signal_history"
+            "SELECT COUNT(*) FROM signal_history WHERE timeframe = '15M'"
         ).fetchone()[0]
 
         pages = max(1, (total + limit - 1) // limit)
@@ -417,6 +443,7 @@ async def signal_history(page: int = 1):
 
         rows = db.execute("""
             SELECT * FROM signal_history
+            WHERE timeframe = '15M'
             ORDER BY issued_at DESC
             LIMIT ? OFFSET ?
         """, (limit, offset)).fetchall()
@@ -435,6 +462,7 @@ async def signal_history(page: int = 1):
                 SUM(CASE WHEN outcome_status = 'MONITORING' THEN 1 ELSE 0 END) AS monitoring,
                 SUM(CASE WHEN outcome_status = 'STOP_LOSS_HIT' THEN 1 ELSE 0 END) AS outcomes_stop_loss
             FROM signal_history
+            WHERE timeframe = '15M'
         """).fetchone()
 
     return {
