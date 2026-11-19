@@ -12,7 +12,7 @@ import {
   type Time,
   type UTCTimestamp,
 } from 'lightweight-charts'
-import { authFetch, type PrecisionSignal } from './revai'
+import { type PrecisionSignal } from './revai'
 
 type Timeframe = '5M' | '15M' | '1H' | '4H' | '1D'
 type Candle = { epoch: number; open: number; high: number; low: number; close: number }
@@ -65,7 +65,7 @@ export default function TradingViewGoldChart({ apiBase, signal }: Props) {
     let active = true
     const load = async () => {
       try {
-        const response = await authFetch(`${apiBase.replace(/\/$/, '')}/api/market/gold/${timeframe}`)
+        const response = await fetch(`${apiBase.replace(/\/$/, '')}/api/market/gold/${timeframe}`)
         if (!response.ok) throw new Error(`Market feed returned HTTP ${response.status}`)
         const payload = await response.json()
         const rows: Candle[] = (payload.candles ?? []).filter((c: Candle) =>

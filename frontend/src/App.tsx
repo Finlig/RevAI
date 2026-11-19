@@ -1,5 +1,5 @@
-import { useEffect, useState, type FormEvent } from 'react'
-import { REVAI_API, authFetch, fetchPrecisionSignal, type PrecisionResponse } from './revai'
+import { useEffect, useState } from 'react'
+import { REVAI_API, fetchPrecisionSignal, type PrecisionResponse } from './revai'
 import GoldLiveChart from './GoldLiveChart'
 import TradingViewGoldChart from './TradingViewGoldChart'
 import {
@@ -33,170 +33,7 @@ function App() {
   const [historyLoading, setHistoryLoading] = useState(false)
   const [historyPage, setHistoryPage] = useState(1)
   const [historyPages, setHistoryPages] = useState(1)
-  const [authReady, setAuthReady] = useState(import.meta.env.DEV)
-  const [accessState, setAccessState] = useState<'login' | 'active' | 'subscription'>(import.meta.env.DEV ? 'active' : 'login')
-  const [authToken, setAuthToken] = useState<string | null>(() => localStorage.getItem('revai_access_token'))
-  const [authUser, setAuthUser] = useState<{ full_name: string; email: string } | null>(null)
-  const [loginEmail, setLoginEmail] = useState('')
-  const [loginPassword, setLoginPassword] = useState('')
-  const [loginBusy, setLoginBusy] = useState(false)
-  const [authError, setAuthError] = useState('')
-  const [authMode, setAuthMode] = useState<'login' | 'signup'>('login')
-  const [signupName, setSignupName] = useState('')
-  const [signupEmail, setSignupEmail] = useState('')
-  const [signupPassword, setSignupPassword] = useState('')
-  const [signupPlanId, setSignupPlanId] = useState('')
-  const [signupPlans, setSignupPlans] = useState<Array<{ id: number; name: string; price_naira: number; duration_value: number; duration_unit: string }>>([])
-  const [signupBusy, setSignupBusy] = useState(false)
-  const [signupMessage, setSignupMessage] = useState('')
-
-  const verifySession = async (token: string) => {
-    const response = await fetch(`${REVAI_API}/api/auth/dashboard-access`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-    if (response.status === 403) {
-      setAccessState('subscription')
-      setAuthUser(null)
-      return false
-    }
-    if (!response.ok) throw new Error('Your session has expired. Please sign in again.')
-    const data = await response.json()
-    setAuthUser(data.user)
-    setAccessState('active')
-    return true
-  }
-
   useEffect(() => {
-    if (import.meta.env.DEV) {
-      setAccessState('active')
-      setAuthReady(true)
-      return
-    }
-
-    let active = true
-    const restore = async () => {
-      const savedToken = localStorage.getItem('revai_access_token')
-      if (!savedToken) {
-        if (active) setAuthReady(true)
-        return
-      }
-      try {
-        await verifySession(savedToken)
-        if (active) setAuthToken(savedToken)
-      } catch {
-        localStorage.removeItem('revai_access_token')
-        if (active) {
-          setAuthToken(null)
-          setAccessState('login')
-        }
-      } finally {
-        if (active) setAuthReady(true)
-      }
-    }
-    restore()
-    return () => { active = false }
-  }, [])
-
-  const handleLogin = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    setLoginBusy(true)
-    setAuthError('')
-    try {
-      const response = await fetch(`${REVAI_API}/api/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: loginEmail, password: loginPassword }),
-      })
-      const data = await response.json()
-      if (!response.ok) throw new Error(data.detail || 'Unable to sign in.')
-      const token = data.access_token as string
-      localStorage.setItem('revai_access_token', token)
-      setAuthToken(token)
-      const hasAccess = await verifySession(token)
-      if (!hasAccess) setAuthError('Your account is signed in, but an active subscription is required to access RevAI.')
-    } catch (error) {
-      localStorage.removeItem('revai_access_token')
-      setAuthToken(null)
-      setAccessState('login')
-      setAuthError(error instanceof Error ? error.message : 'Unable to sign in.')
-    } finally {
-      setLoginBusy(false)
-    }
-  }
-
-  useEffect(() => {
-    if (authMode !== 'signup') return
-    let active = true
-    fetch(`${REVAI_API}/api/auth/plans`)
-      .then(async response => {
-        if (!response.ok) throw new Error('Unable to load subscription plans.')
-        return response.json()
-      })
-      .then(data => {
-        if (!active) return
-        const plans = Array.isArray(data.plans) ? data.plans : []
-        setSignupPlans(plans)
-        if (plans.length) setSignupPlanId(String(plans[0].id))
-      })
-      .catch(error => {
-        if (active) setAuthError(error instanceof Error ? error.message : 'Unable to load subscription plans.')
-      })
-    return () => { active = false }
-  }, [authMode])
-
-  const handleSignup = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    setSignupBusy(true)
-    setAuthError('')
-    setSignupMessage('')
-    try {
-      if (!signupPlanId) throw new Error('Please select a subscription plan.')
-      const response = await fetch(`${REVAI_API}/api/auth/signup`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          full_name: signupName,
-          email: signupEmail,
-          password: signupPassword,
-          plan_id: Number(signupPlanId),
-        }),
-      })
-      const data = await response.json()
-      if (!response.ok) throw new Error(data.detail || 'Unable to create your account.')
-      setSignupMessage(data.message || 'Account created. Complete payment to activate your subscription.')
-      setAuthMode('login')
-      setLoginEmail(signupEmail)
-      setLoginPassword('')
-    } catch (error) {
-      setAuthError(error instanceof Error ? error.message : 'Unable to create your account.')
-    } finally {
-      setSignupBusy(false)
-    }
-  }
-
-  useEffect(() => {
-    const onUnauthorized = () => {
-      setAuthToken(null)
-      setAuthUser(null)
-      setAccessState('login')
-      setApiError('Your session expired. Please sign in again.')
-    }
-    window.addEventListener('revai:unauthorized', onUnauthorized)
-    return () => window.removeEventListener('revai:unauthorized', onUnauthorized)
-  }, [])
-
-  const handleLogout = () => {
-    localStorage.removeItem('revai_access_token')
-    setAuthToken(null)
-    setAuthUser(null)
-    setAccessState('login')
-    setMarketData(null)
-    setHistoryRecords([])
-  }
-
-
-  useEffect(() => {
-    if (accessState !== 'active') return
     let active = true
     let timer: ReturnType<typeof setTimeout>
 
@@ -225,16 +62,15 @@ function App() {
       active = false
       clearTimeout(timer)
     }
-  }, [accessState, authToken])
+  }, [])
 
   useEffect(() => {
-    if (accessState !== 'active') return
     let active = true
 
     const loadHistory = async () => {
       setHistoryLoading(true)
       try {
-        const response = await authFetch(`${REVAI_API}/api/signals/history?page=${historyPage}`)
+        const response = await fetch(`${REVAI_API}/api/signals/history?page=${historyPage}`)
         if (!response.ok) throw new Error('History request failed')
 
         const data = await response.json()
@@ -252,7 +88,7 @@ function App() {
 
     loadHistory()
     return () => { active = false }
-  }, [historyPage, accessState, authToken])
+  }, [historyPage])
 
   const timeframeSignals = marketData?.signals ?? {}
 
@@ -355,52 +191,6 @@ function App() {
     </div>
   )
 
-  if (!authReady) {
-    return <div className="auth-screen"><div className="auth-card"><div className="brand-mark"><Activity size={22} /></div><h1>REV<span>AI</span></h1><p>Verifying your secure session…</p></div></div>
-  }
-
-  if (accessState !== 'active') {
-    const authSubmit = authMode === 'signup' ? handleSignup : handleLogin
-    return (
-      <div className="auth-screen">
-        <form className="auth-card" onSubmit={authSubmit}>
-          <div className="auth-logo"><div className="brand-mark"><Activity size={22} /></div><div><strong>REV<span>AI</span></strong><small>GOLD INTELLIGENCE</small></div></div>
-          <p className="auth-eyebrow">SECURE TRADER ACCESS</p>
-          <h1>{accessState === 'subscription' ? 'Subscription required' : authMode === 'signup' ? 'Create your account' : 'Welcome back'}</h1>
-          <p className="auth-description">{accessState === 'subscription' ? 'Your account is authenticated, but it does not have an active subscription. Complete subscription activation to access RevAI.' : authMode === 'signup' ? 'Create your RevAI account and select a subscription plan.' : 'Sign in to access your 15-minute Gold signal dashboard.'}</p>
-          {accessState === 'login' && authMode === 'login' && <>
-            <label>Email address<input type="email" autoComplete="username" value={loginEmail} onChange={event => setLoginEmail(event.target.value)} placeholder="you@example.com" required /></label>
-            <label>Password<input type="password" autoComplete="current-password" value={loginPassword} onChange={event => setLoginPassword(event.target.value)} placeholder="Enter your password" required /></label>
-            {signupMessage && <div className="auth-success" role="status">{signupMessage}</div>}
-            {authError && <div className="auth-error" role="alert">{authError}</div>}
-            <button className="gold-button auth-submit" type="submit" disabled={loginBusy}>{loginBusy ? 'SIGNING IN…' : 'SIGN IN'}</button>
-            <p className="auth-switch">New to RevAI? <button type="button" onClick={() => { setAuthError(''); setSignupMessage(''); setAuthMode('signup') }}>Create an account</button></p>
-          </>}
-          {accessState === 'login' && authMode === 'signup' && <>
-            <label>Full name<input type="text" autoComplete="name" value={signupName} onChange={event => setSignupName(event.target.value)} placeholder="Your full name" minLength={2} required /></label>
-            <label>Email address<input type="email" autoComplete="email" value={signupEmail} onChange={event => setSignupEmail(event.target.value)} placeholder="you@example.com" required /></label>
-            <label>Password<input type="password" autoComplete="new-password" value={signupPassword} onChange={event => setSignupPassword(event.target.value)} placeholder="At least 8 characters" minLength={8} required /></label>
-            <label>Subscription plan
-              <select value={signupPlanId} onChange={event => setSignupPlanId(event.target.value)} required>
-                <option value="">Select a plan</option>
-                {signupPlans.map(plan => <option key={plan.id} value={plan.id}>{plan.name} — ₦{Number(plan.price_naira).toLocaleString()} / {plan.duration_value} {plan.duration_unit}</option>)}
-              </select>
-            </label>
-            {signupPlans.length === 0 && !authError && <p className="auth-description">Loading available plans…</p>}
-            {authError && <div className="auth-error" role="alert">{authError}</div>}
-            <button className="gold-button auth-submit" type="submit" disabled={signupBusy || signupPlans.length === 0}>{signupBusy ? 'CREATING ACCOUNT…' : 'CREATE ACCOUNT'}</button>
-            <p className="auth-switch">Already have an account? <button type="button" onClick={() => { setAuthError(''); setAuthMode('login') }}>Sign in</button></p>
-          </>}
-          {accessState === 'subscription' && <>
-            {authError && <div className="auth-error" role="alert">{authError}</div>}
-            <button className="gold-button auth-submit" type="button" onClick={handleLogout}>SIGN OUT</button>
-          </>}
-          <div className="auth-security"><ShieldCheck size={15} /> Protected by RevAI account authentication</div>
-        </form>
-      </div>
-    )
-  }
-
   return (
     <div className="app-shell">
       <aside className="sidebar">
@@ -435,8 +225,7 @@ function App() {
           </div>
           <div className="profile">
             <div className="avatar">R</div>
-            <div><strong>{authUser?.full_name || 'RevAI Trader'}</strong><small>{authUser?.email || 'Pro workspace'}</small></div>
-            <button className="logout-button" onClick={handleLogout} title="Sign out">Sign out</button>
+            <div><strong>RevAI Trader</strong><small>Pro workspace</small></div>
           </div>
         </div>
       </aside>
@@ -638,7 +427,7 @@ function App() {
                     onClick={async () => {
                       setHistoryLoading(true)
                       try {
-                        const response = await authFetch(`${REVAI_API}/api/signals/history?page=${historyPage}`)
+                        const response = await fetch(`${REVAI_API}/api/signals/history?page=${historyPage}`)
                         if (!response.ok) throw new Error('History request failed')
                         const data = await response.json()
                         setHistoryRecords(data.records ?? [])

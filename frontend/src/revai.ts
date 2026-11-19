@@ -122,29 +122,8 @@ export interface PrecisionResponse {
   }>
 }
 
-export function getAuthToken(): string | null {
-  return localStorage.getItem('revai_access_token')
-}
-
-export function authHeaders(): HeadersInit {
-  const token = getAuthToken()
-  return token ? { Authorization: `Bearer ${token}` } : {}
-}
-
-export async function authFetch(input: RequestInfo | URL, init: RequestInit = {}): Promise<Response> {
-  const response = await fetch(input, {
-    ...init,
-    headers: { ...authHeaders(), ...(init.headers || {}) },
-  })
-  if (response.status === 401) {
-    localStorage.removeItem('revai_access_token')
-    window.dispatchEvent(new Event('revai:unauthorized'))
-  }
-  return response
-}
-
 export async function fetchPrecisionSignal(): Promise<PrecisionResponse> {
-  const response = await authFetch(`${REVAI_API}/api/signals/precision`)
+  const response = await fetch(`${REVAI_API}/api/signals/precision`)
   if (!response.ok) {
     throw new Error(`RevAI API error: HTTP ${response.status}`)
   }
