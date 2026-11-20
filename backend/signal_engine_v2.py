@@ -878,6 +878,92 @@ def _market_structure(candles: list[dict[str, Any]], direction: str, atr: float)
     }
 
 
+def _assess_signal_confidence(
+    setup_type: str,
+    market_condition: str,
+    opposing_htf: bool,
+    matching_htf: int,
+) -> dict[str, Any]:
+    """Separate setup confidence from the 15M qualification decision."""
+    setup = setup_type.upper()
+    condition = market_condition.upper()
+    flags: list[str] = []
+
+    if setup in ("FAILED BREAKOUT", "CHOPPY"):
+        return {
+            "confidence_label": "LOW",
+            "risk_level": "VERY HIGH",
+            "trade_action": "NO TRADE",
+            "trade_guidance": (
+                "The market structure invalidates or degrades this setup. "
+                "Do not act on the directional signal until a fresh setup forms."
+            ),
+            "risk_flags": [setup.replace("_", " ").title()],
+        }
+
+    if setup == "BREAKOUT ATTEMPT":
+        return {
+            "confidence_label": "LOW",
+            "risk_level": "ELEVATED",
+            "trade_action": "WAIT FOR CONFIRMATION",
+            "trade_guidance": (
+                "A range break has been detected but has not passed breakout "
+                "confirmation. Wait for confirmation before considering entry."
+            ),
+            "risk_flags": ["Breakout not confirmed"],
+        }
+
+    if setup == "EARLY REVERSAL":
+        flags.append("Reversal is not fully confirmed")
+        confidence = "LOW"
+        guidance = (
+            "This is an early reversal warning, not a confirmed reversal. "
+            "Treat it as a lower-confidence setup; wait for additional "
+            "price-action confirmation or use reduced exposure."
+        )
+        action = "TRADE WITH CAUTION"
+        risk = "ELEVATED"
+    elif condition == "HIGH VOLATILITY":
+        flags.append("High volatility")
+        confidence = "MODERATE"
+        guidance = (
+            "Volatility is elevated. Reduce exposure and do not widen the "
+            "structural stop loss to accommodate price swings."
+        )
+        action = "TRADE WITH CAUTION"
+        risk = "ELEVATED"
+    elif opposing_htf:
+        flags.append("Higher-timeframe direction is opposing")
+        confidence = "LOW"
+        guidance = (
+            "Higher-timeframe context opposes this 15M direction. Treat the "
+            "setup cautiously and wait for stronger confirmation or reduce exposure."
+        )
+        action = "TRADE WITH CAUTION"
+        risk = "ELEVATED"
+    elif setup in (
+        "CONFIRMED REVERSAL", "BREAKOUT CONFIRMED",
+        "RETEST CONFIRMED", "TREND CONTINUATION",
+    ) and matching_htf >= 1:
+        confidence = "HIGH"
+        guidance = "The setup has structural confirmation and supporting higher-timeframe context. Apply normal risk controls."
+        action = "QUALIFIED SETUP"
+        risk = "STANDARD"
+    else:
+        confidence = "MODERATE"
+        guidance = "The 15M setup qualifies, but confirmation strength is not at the highest tier. Apply normal risk controls and monitor price action."
+        action = "QUALIFIED SETUP"
+        risk = "STANDARD"
+
+    return {
+        "confidence_label": confidence,
+        "risk_level": risk,
+        "trade_action": action,
+        "trade_guidance": guidance,
+        "risk_flags": flags,
+    }
+
+
 def _classify_market_and_setup(
     candles: list[dict[str, Any]],
     direction: str,
@@ -1275,6 +1361,15 @@ def analyse_precision_opportunity(
         classification_details["quality_tier"] = "STANDARD"
     else:
         classification_details["quality_tier"] = "QUICK SCALP"
+
+    confidence_assessment = _assess_signal_confidence(
+        classification_details["setup_type"],
+        classification_details["market_condition"],
+        classification_details["higher_timeframe_alignment"]["opposing"],
+        classification_details["higher_timeframe_alignment"]["matching"],
+    )
+    classification_details["confidence_assessment"] = confidence_assessment
+
     return {
         "timeframe": "15M",
         "strategy": "RevAI Multi-Timeframe Confluence Engine",
@@ -1284,6 +1379,7 @@ def analyse_precision_opportunity(
         "quality_tier": classification_details["quality_tier"],
         "setup_type": classification_details["setup_type"],
         "market_condition": classification_details["market_condition"],
+        **confidence_assessment,
         "classification_details": classification_details,
         "sniper": sniper,
         "sniper_score": htf_points,
