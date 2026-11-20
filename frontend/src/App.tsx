@@ -584,7 +584,7 @@ function App() {
                           </div>
                           <div className="signal-card-badges">
                             <span className="signal-timeframe-badge">{tf}</span>
-                            <span className={`signal-action-badge ${isBuy ? 'buy' : 'sell'}`}>
+                            <span className={`signal-action-badge ${tradeAction === 'NO TRADE' ? 'no-trade' : tradeAction === 'WAIT FOR CONFIRMATION' || tradeAction === 'TRADE WITH CAUTION' ? 'caution' : isBuy ? 'buy' : 'sell'}`}>
                               {tradeAction === 'NO TRADE'
                                 ? `${item.signal} · NO TRADE`
                                 : tradeAction === 'WAIT FOR CONFIRMATION'
