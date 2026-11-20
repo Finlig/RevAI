@@ -895,3 +895,63 @@ footer { border-top: 1px solid var(--border); margin-top: 27px; padding-top: 15p
 .signal-card-footer {
   font-size: calc(10px + 1px);
 }
+
+
+/* Confidence and risk guidance on qualified signal cards */
+.signal-risk-notice {
+  margin: 12px 0 16px;
+  padding: 12px 14px;
+  border: 1px solid #49402d;
+  border-left: 3px solid #c99b4c;
+  border-radius: 8px;
+  background: #191710;
+}
+.signal-risk-notice.low,
+.signal-risk-notice.very-high {
+  border-left-color: #df7770;
+  background: #1d1513;
+}
+.signal-risk-notice.moderate,
+.signal-risk-notice.elevated {
+  border-left-color: #d5a34e;
+}
+.signal-risk-notice.high,
+.signal-risk-notice.standard {
+  border-left-color: #55b88b;
+}
+.signal-risk-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.signal-risk-heading strong {
+  color: #ead5a4;
+  font-size: 11px;
+  letter-spacing: .8px;
+}
+.signal-risk-heading span {
+  color: #c7b995;
+  font-size: 10px;
+  font-weight: 700;
+}
+.signal-risk-notice.low .signal-risk-heading strong,
+.signal-risk-notice.very-high .signal-risk-heading strong {
+  color: #ef9991;
+}
+.signal-risk-notice p {
+  margin: 7px 0 0;
+  color: #c4bdaf;
+  font-size: 11px;
+  line-height: 1.55;
+}
+.signal-risk-notice small {
+  display: block;
+  margin-top: 7px;
+  color: #e4ad79;
+  font-size: 10px;
+}
+@media(max-width:600px) {
+  .signal-risk-heading { align-items: flex-start; flex-direction: column; gap: 5px; }
+}
