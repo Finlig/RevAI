@@ -291,16 +291,14 @@ function App() {
           <div className="top-actions">
             <div className="market-status"><span className={`status-dot ${marketData ? "" : "muted"}`} /> Market feed <span>{apiError ? "Connection error" : loading ? "Connecting..." : "Connected"}</span></div>
             <button className="icon-button" aria-label="Notifications"><Bell size={18} /></button>
-            <button className="icon-button" aria-label="Help"><CircleHelp size={18} /></button>
             <button
-              className="theme-toggle"
+              className="icon-button theme-toggle"
               type="button"
               onClick={toggleTheme}
               aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
               title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
             >
               {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
-              <span>{theme === 'dark' ? 'Light mode' : 'Dark mode'}</span>
             </button>
             <div className="top-avatar">R</div>
           </div>
