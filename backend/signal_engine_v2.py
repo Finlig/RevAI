@@ -490,14 +490,26 @@ def _assess_range_breakout(
     range_width = range_high - range_low
     range_width_atr = range_width / float(atr_4h)
     touch_tolerance = max(float(atr_4h) * 0.35, abs(range_high) * 0.00002)
-    resistance_touches = sum(
-        float(candle["high"]) >= range_high - touch_tolerance
-        for candle in range_sample
-    )
-    support_touches = sum(
-        float(candle["low"]) <= range_low + touch_tolerance
-        for candle in range_sample
-    )
+
+    def count_separated_touches(side: str) -> int:
+        # Consecutive candles at one boundary count as a single visit.
+        # Require two intervening candles before counting a new test.
+        clusters = 0
+        last_touch_index = -10
+        for index, candle in enumerate(range_sample):
+            touched = (
+                float(candle["high"]) >= range_high - touch_tolerance
+                if side == "RESISTANCE"
+                else float(candle["low"]) <= range_low + touch_tolerance
+            )
+            if touched and index - last_touch_index >= 3:
+                clusters += 1
+            if touched:
+                last_touch_index = index
+        return clusters
+
+    resistance_touches = count_separated_touches("RESISTANCE")
+    support_touches = count_separated_touches("SUPPORT")
 
     h4_closes = [float(candle["close"]) for candle in four_hour]
     h4_adx_values = _adx_series(four_hour)
@@ -671,31 +683,48 @@ def _assess_range_breakout(
     # It is explicitly reported as unavailable rather than inferred.
     volume_confirmation = None
 
-    previous_breakouts = []
-    for candle in one_hour[-4:-1]:
+    recent_breakout_events = []
+    active_breakout = None
+    failed_breakout = None
+    for candle in one_hour[-4:]:
         side = breakout_side(candle)
+        candle_close = float(candle["close"])
+        candle_outside = candle_close > range_high or candle_close < range_low
+
+        if active_breakout and not candle_outside:
+            # The first close back inside the range invalidates that attempt.
+            failed_breakout = dict(active_breakout)
+            active_breakout = None
+
         if side:
-            previous_breakouts.append({
+            active_breakout = {
                 "direction": side,
                 "epoch": int(candle["epoch"]),
-                "close": round(float(candle["close"]), 5),
-            })
-    previous_breakout = previous_breakouts[-1] if previous_breakouts else None
+                "close": round(candle_close, 5),
+            }
+            recent_breakout_events.append(dict(active_breakout))
+
+    previous_breakout = (
+        active_breakout
+        if active_breakout and active_breakout["epoch"] != int(latest["epoch"])
+        else None
+    )
 
     status = "NO_BREAKOUT"
     breakout_direction = latest_side or (
-        previous_breakout["direction"] if previous_breakout else None
+        previous_breakout["direction"] if previous_breakout else
+        failed_breakout["direction"] if failed_breakout else None
     )
     status_reason = "No completed 1H candle has decisively closed outside the 4H range."
     retest_confirmed = False
     breakout_attempt = bool(latest_side)
 
-    # A return inside the original range within the next 1–3 completed 1H
-    # candles invalidates the attempted break.
-    if previous_breakout and not close_is_outside:
+    # A close back inside within the observed three-bar follow-through window
+    # records a failed breakout. A new close outside later starts a fresh attempt.
+    if failed_breakout and not close_is_outside:
         status = "FAILED BREAKOUT"
-        breakout_direction = previous_breakout["direction"]
-        status_reason = "Price closed back inside the 4H range within three completed 1H candles."
+        breakout_direction = failed_breakout["direction"]
+        status_reason = "Price closed back inside the 4H range within the next three completed 1H candles."
 
     elif previous_breakout and close_is_outside:
         prior_direction = previous_breakout["direction"]
@@ -791,7 +820,8 @@ def _assess_range_breakout(
         "adx_expanded_from_below_20": bool(adx_expanded_from_below_20),
         "higher_timeframe_context": pre_breakout_context,
         "higher_timeframe_not_opposing": bool(higher_timeframe_not_opposing),
-        "previous_breakouts": previous_breakouts,
+        "recent_breakout_events": recent_breakout_events,
+        "failed_breakout_event": failed_breakout,
         **base_diagnostics,
     }
 
@@ -1002,7 +1032,10 @@ def _classify_market_and_setup(
 
     breakout_status = breakout_assessment.get("status")
     breakout_direction = breakout_assessment.get("breakout_direction")
-    if breakout_status == "FAILED BREAKOUT":
+    if (
+        breakout_status == "FAILED BREAKOUT"
+        and breakout_direction == direction
+    ):
         setup_type = "FAILED BREAKOUT"
     elif (
         breakout_status == "RETEST CONFIRMED"
