@@ -348,6 +348,454 @@ def _timeframe_confluences(
 
 
 
+
+def _adx_series(candles: list[dict[str, Any]], period: int = 14) -> list[float]:
+    """Return a simple rolling ADX series from completed OHLC candles."""
+    if len(candles) < (2 * period + 1):
+        return []
+
+    true_ranges: list[float] = []
+    plus_dm: list[float] = []
+    minus_dm: list[float] = []
+
+    for index in range(1, len(candles)):
+        current = candles[index]
+        previous = candles[index - 1]
+        high_move = float(current["high"]) - float(previous["high"])
+        low_move = float(previous["low"]) - float(current["low"])
+
+        true_ranges.append(max(
+            float(current["high"]) - float(current["low"]),
+            abs(float(current["high"]) - float(previous["close"])),
+            abs(float(current["low"]) - float(previous["close"])),
+        ))
+        plus_dm.append(high_move if high_move > low_move and high_move > 0 else 0.0)
+        minus_dm.append(low_move if low_move > high_move and low_move > 0 else 0.0)
+
+    dx_values: list[float] = []
+    for end in range(period, len(true_ranges) + 1):
+        start = end - period
+        tr_sum = sum(true_ranges[start:end])
+        if tr_sum <= 0:
+            dx_values.append(0.0)
+            continue
+
+        plus_di = 100.0 * sum(plus_dm[start:end]) / tr_sum
+        minus_di = 100.0 * sum(minus_dm[start:end]) / tr_sum
+        denominator = plus_di + minus_di
+        dx_values.append(
+            100.0 * abs(plus_di - minus_di) / denominator
+            if denominator > 0 else 0.0
+        )
+
+    adx_values: list[float] = []
+    for end in range(period, len(dx_values) + 1):
+        adx_values.append(sum(dx_values[end - period:end]) / period)
+    return adx_values
+
+
+def _bollinger_width_series(
+    closes: list[float], period: int = 20
+) -> list[float]:
+    """Return normalised Bollinger bandwidth values for squeeze detection."""
+    widths: list[float] = []
+    if len(closes) < period:
+        return widths
+
+    for end in range(period, len(closes) + 1):
+        window = closes[end - period:end]
+        mean = sum(window) / period
+        if mean == 0:
+            widths.append(0.0)
+            continue
+        variance = sum((value - mean) ** 2 for value in window) / period
+        widths.append((4.0 * variance ** 0.5) / abs(mean))
+    return widths
+
+
+def _assess_range_breakout(
+    candles_by_timeframe: dict[str, list[dict[str, Any]]],
+    direction: str,
+    as_of_epoch: int,
+) -> dict[str, Any]:
+    """
+    Define the range on completed 4H candles and assess confirmation on 1H.
+    The 4H and Daily context is deliberately cut off before the candidate
+    1H candle opens to avoid look-ahead in live analysis and backtests.
+    """
+    four_hour_all = _closed_candles(
+        candles_by_timeframe.get("4H", []), "4H", as_of_epoch
+    )
+    one_hour = _closed_candles(
+        candles_by_timeframe.get("1H", []), "1H", as_of_epoch
+    )
+
+    if len(one_hour) < 30:
+        return {
+            "ready": False,
+            "status": "NOT_READY",
+            "reason": "At least 30 fully closed 1H candles are required.",
+            "range_timeframe": "4H",
+            "confirmation_timeframe": "1H",
+        }
+
+    latest = one_hour[-1]
+    candidate_start = int(latest["epoch"])
+    # Only 4H candles that were complete before this 1H candle began are
+    # eligible to define the range.
+    four_hour = [
+        candle for candle in four_hour_all
+        if int(candle["epoch"]) + TIMEFRAME_SECONDS["4H"] <= candidate_start
+    ]
+
+    lookback = 20
+    if len(four_hour) < lookback:
+        return {
+            "ready": False,
+            "status": "NOT_READY",
+            "reason": "At least 20 completed 4H candles preceding the 1H test are required.",
+            "range_timeframe": "4H",
+            "confirmation_timeframe": "1H",
+            "completed_4h_candles": len(four_hour),
+        }
+
+    # A missing 4H interval makes the range boundaries unreliable.
+    range_sample = four_hour[-lookback:]
+    range_contiguous = all(
+        int(current["epoch"]) - int(previous["epoch"]) == TIMEFRAME_SECONDS["4H"]
+        for previous, current in zip(range_sample, range_sample[1:])
+    )
+    if not range_contiguous:
+        return {
+            "ready": False,
+            "status": "NOT_READY",
+            "reason": "A gap exists in the 4H range window.",
+            "range_timeframe": "4H",
+            "confirmation_timeframe": "1H",
+            "range_data_contiguous": False,
+        }
+
+    atr_4h = calculate_atr(four_hour)
+    if not atr_4h or atr_4h <= 0:
+        return {
+            "ready": False,
+            "status": "NOT_READY",
+            "reason": "4H ATR is unavailable for range qualification.",
+            "range_timeframe": "4H",
+            "confirmation_timeframe": "1H",
+        }
+
+    range_high = max(float(candle["high"]) for candle in range_sample)
+    range_low = min(float(candle["low"]) for candle in range_sample)
+    range_width = range_high - range_low
+    range_width_atr = range_width / float(atr_4h)
+    touch_tolerance = max(float(atr_4h) * 0.35, abs(range_high) * 0.00002)
+    resistance_touches = sum(
+        float(candle["high"]) >= range_high - touch_tolerance
+        for candle in range_sample
+    )
+    support_touches = sum(
+        float(candle["low"]) <= range_low + touch_tolerance
+        for candle in range_sample
+    )
+
+    h4_closes = [float(candle["close"]) for candle in four_hour]
+    h4_adx_values = _adx_series(four_hour)
+    adx_4h = h4_adx_values[-1] if h4_adx_values else None
+
+    ema20 = calculate_ema(h4_closes, 20)
+    ema50 = calculate_ema(h4_closes, 50)
+    ema20_previous = (
+        calculate_ema(h4_closes[:-5], 20)
+        if len(h4_closes) >= 25 else None
+    )
+    flat_moving_averages = bool(
+        ema20 is not None
+        and ema50 is not None
+        and ema20_previous is not None
+        and abs(ema20 - ema50) <= 0.60 * float(atr_4h)
+        and abs(ema20 - ema20_previous) <= 0.40 * float(atr_4h)
+    )
+
+    bandwidths = _bollinger_width_series(h4_closes)
+    bb_narrowing = bool(
+        len(bandwidths) >= 5
+        and bandwidths[-1] <= (
+            sum(bandwidths[-5:-1]) / 4.0
+        ) * 0.90
+    )
+    low_range_expansion = 2.0 <= range_width_atr <= 8.5
+    compression_present = bb_narrowing or low_range_expansion
+    low_adx = adx_4h is not None and adx_4h < 25.0
+
+    range_qualified = (
+        support_touches >= 2
+        and resistance_touches >= 2
+        and compression_present
+        and (low_adx or flat_moving_averages)
+    )
+
+    base_diagnostics = {
+        "range_timeframe": "4H",
+        "confirmation_timeframe": "1H",
+        "range_high": round(range_high, 5),
+        "range_low": round(range_low, 5),
+        "range_width_atr": round(range_width_atr, 3),
+        "range_candles": lookback,
+        "support_touches": int(support_touches),
+        "resistance_touches": int(resistance_touches),
+        "touch_tolerance": round(touch_tolerance, 5),
+        "atr_4h": round(float(atr_4h), 5),
+        "adx_4h": round(adx_4h, 2) if adx_4h is not None else None,
+        "low_adx": bool(low_adx),
+        "flat_moving_averages": bool(flat_moving_averages),
+        "bollinger_narrowing": bool(bb_narrowing),
+        "compression_present": bool(compression_present),
+        "range_qualified": bool(range_qualified),
+        "range_data_contiguous": True,
+        "range_as_of_epoch": candidate_start,
+    }
+
+    if not range_qualified:
+        return {
+            "ready": True,
+            "status": "RANGE_NOT_QUALIFIED",
+            "reason": "The 4H structure does not meet the range qualification rules.",
+            **base_diagnostics,
+        }
+
+    atr_1h = calculate_atr(one_hour)
+    if not atr_1h or atr_1h <= 0:
+        return {
+            "ready": True,
+            "status": "NOT_READY",
+            "reason": "1H ATR is unavailable for breakout confirmation.",
+            **base_diagnostics,
+        }
+
+    one_hour_adx_values = _adx_series(one_hour)
+    adx_1h = one_hour_adx_values[-1] if one_hour_adx_values else None
+    previous_adx_1h = (
+        one_hour_adx_values[-2] if len(one_hour_adx_values) >= 2 else None
+    )
+    earlier_adx_1h = (
+        one_hour_adx_values[-3] if len(one_hour_adx_values) >= 3 else None
+    )
+    adx_rising = bool(
+        adx_1h is not None
+        and previous_adx_1h is not None
+        and adx_1h > previous_adx_1h
+    )
+    adx_crossed_25 = bool(
+        adx_1h is not None
+        and previous_adx_1h is not None
+        and previous_adx_1h < 25.0 <= adx_1h
+        and adx_rising
+    )
+    adx_rising_above_25 = bool(
+        adx_1h is not None and adx_1h >= 25.0 and adx_rising
+    )
+    adx_expanded_from_below_20 = bool(
+        adx_1h is not None
+        and earlier_adx_1h is not None
+        and earlier_adx_1h < 20.0
+        and adx_1h >= 25.0
+        and adx_rising
+    )
+
+    # Higher-timeframe direction is evaluated strictly before the candidate
+    # 1H breakout candle, so its own move cannot manufacture agreement.
+    pre_breakout_context = {}
+    for timeframe in ("1D", "4H"):
+        pre_breakout_context[timeframe] = _trend_context(
+            candles_by_timeframe.get(timeframe, []),
+            timeframe,
+            candidate_start,
+        )
+
+    relevant_trends = [
+        item.get("trend")
+        for item in pre_breakout_context.values()
+        if item.get("ready")
+    ]
+    opposing_trend = (
+        "BEARISH" if direction == "BUY" else "BULLISH"
+    )
+    higher_timeframe_opposed = any(
+        trend == opposing_trend for trend in relevant_trends
+    )
+    higher_timeframe_not_opposing = bool(
+        relevant_trends and not higher_timeframe_opposed
+    )
+
+    close = float(latest["close"])
+    open_price = float(latest["open"])
+    high = float(latest["high"])
+    low = float(latest["low"])
+    candle_range = max(high - low, 1e-12)
+    body = abs(close - open_price)
+    upper_wick = high - max(open_price, close)
+    lower_wick = min(open_price, close) - low
+    breakout_buffer = max(float(atr_1h) * 0.10, abs(close) * 0.00001)
+
+    def breakout_side(candle: dict[str, Any]) -> str | None:
+        candle_close = float(candle["close"])
+        if candle_close > range_high + breakout_buffer:
+            return "BUY"
+        if candle_close < range_low - breakout_buffer:
+            return "SELL"
+        return None
+
+    latest_side = breakout_side(latest)
+    close_is_outside = close > range_high or close < range_low
+    if close > range_high:
+        latest_side = "BUY"
+    elif close < range_low:
+        latest_side = "SELL"
+
+    strong_body = body >= float(atr_1h)
+    small_breakout_wick = bool(
+        (latest_side == "BUY" and upper_wick <= candle_range * 0.20)
+        or (latest_side == "SELL" and lower_wick <= candle_range * 0.20)
+    )
+    supporting_checks = {
+        "strong_body_at_least_1_atr": bool(strong_body),
+        "small_wick_on_breakout_side": bool(small_breakout_wick),
+        "adx_rising_above_25": bool(adx_rising_above_25),
+        "higher_timeframe_not_opposing": bool(higher_timeframe_not_opposing),
+    }
+    supporting_score = sum(bool(value) for value in supporting_checks.values())
+    supporting_required = 3
+
+    # Tick volume is not supplied by this Deriv candle normalisation path.
+    # It is explicitly reported as unavailable rather than inferred.
+    volume_confirmation = None
+
+    previous_breakouts = []
+    for candle in one_hour[-4:-1]:
+        side = breakout_side(candle)
+        if side:
+            previous_breakouts.append({
+                "direction": side,
+                "epoch": int(candle["epoch"]),
+                "close": round(float(candle["close"]), 5),
+            })
+    previous_breakout = previous_breakouts[-1] if previous_breakouts else None
+
+    status = "NO_BREAKOUT"
+    breakout_direction = latest_side or (
+        previous_breakout["direction"] if previous_breakout else None
+    )
+    status_reason = "No completed 1H candle has decisively closed outside the 4H range."
+    retest_confirmed = False
+    breakout_attempt = bool(latest_side)
+
+    # A return inside the original range within the next 1–3 completed 1H
+    # candles invalidates the attempted break.
+    if previous_breakout and not close_is_outside:
+        status = "FAILED BREAKOUT"
+        breakout_direction = previous_breakout["direction"]
+        status_reason = "Price closed back inside the 4H range within three completed 1H candles."
+
+    elif previous_breakout and close_is_outside:
+        prior_direction = previous_breakout["direction"]
+        prior_level = range_high if prior_direction == "BUY" else range_low
+        retest_tolerance = max(float(atr_1h) * 0.25, breakout_buffer)
+        tested_boundary = (
+            low <= prior_level + retest_tolerance
+            if prior_direction == "BUY"
+            else high >= prior_level - retest_tolerance
+        )
+        held_outside = (
+            close > prior_level + breakout_buffer
+            if prior_direction == "BUY"
+            else close < prior_level - breakout_buffer
+        )
+        directionally_rejected = (
+            close > open_price
+            and (close - low) / candle_range >= 0.65
+            if prior_direction == "BUY"
+            else close < open_price
+            and (high - close) / candle_range >= 0.65
+        )
+
+        if tested_boundary and held_outside:
+            breakout_direction = prior_direction
+            retest_confirmed = bool(
+                directionally_rejected and higher_timeframe_not_opposing
+            )
+            if retest_confirmed:
+                status = "RETEST CONFIRMED"
+                status_reason = "The 1H retest held the 4H boundary and closed with directional rejection."
+            else:
+                status = "BREAKOUT RETEST"
+                status_reason = "The 1H candle retested the 4H boundary; continuation is not yet fully confirmed."
+        elif (
+            prior_direction == latest_side
+            and (
+                (prior_direction == "BUY" and close > float(one_hour[-2]["close"]))
+                or (prior_direction == "SELL" and close < float(one_hour[-2]["close"]))
+            )
+            and higher_timeframe_not_opposing
+            and adx_rising_above_25
+        ):
+            breakout_direction = prior_direction
+            status = "BREAKOUT CONFIRMED"
+            status_reason = "A second completed 1H candle accepted beyond the 4H boundary with follow-through."
+        else:
+            breakout_direction = prior_direction
+            status = "BREAKOUT ATTEMPT"
+            status_reason = "Price remains outside the range, but acceptance or retest confirmation is insufficient."
+
+    elif latest_side:
+        breakout_direction = latest_side
+        if supporting_score >= supporting_required:
+            status = "BREAKOUT CONFIRMED"
+            status_reason = "The 1H close cleared the 4H range and passed at least three supporting confirmations."
+        else:
+            status = "BREAKOUT ATTEMPT"
+            status_reason = "The 1H close moved beyond the 4H range but did not pass the confirmation score."
+
+    elif close_is_outside:
+        # A close outside but inside the decisive buffer is only an attempt.
+        breakout_direction = "BUY" if close > range_high else "SELL"
+        status = "BREAKOUT ATTEMPT"
+        status_reason = "The 1H candle closed outside the range, but not far enough beyond the ATR buffer."
+
+    return {
+        "ready": True,
+        "status": status,
+        "reason": status_reason,
+        "breakout_direction": breakout_direction,
+        "signal_direction_matches": breakout_direction == direction if breakout_direction else None,
+        "breakout_attempt": bool(breakout_attempt),
+        "retest_confirmed": bool(retest_confirmed),
+        "latest_1h_candle_epoch": int(latest["epoch"]),
+        "latest_1h_close": round(close, 5),
+        "breakout_buffer": round(breakout_buffer, 5),
+        "atr_1h": round(float(atr_1h), 5),
+        "candle_body": round(body, 5),
+        "candle_body_atr": round(body / float(atr_1h), 3),
+        "upper_wick_ratio": round(upper_wick / candle_range, 3),
+        "lower_wick_ratio": round(lower_wick / candle_range, 3),
+        "supporting_checks": supporting_checks,
+        "supporting_score": supporting_score,
+        "supporting_score_required": supporting_required,
+        "supporting_score_available": len(supporting_checks),
+        "volume_confirmation": volume_confirmation,
+        "volume_note": "Tick volume is unavailable in the current Deriv OHLC candle payload and was not scored.",
+        "adx_1h": round(adx_1h, 2) if adx_1h is not None else None,
+        "previous_adx_1h": round(previous_adx_1h, 2) if previous_adx_1h is not None else None,
+        "adx_rising": bool(adx_rising),
+        "adx_crossed_25": bool(adx_crossed_25),
+        "adx_expanded_from_below_20": bool(adx_expanded_from_below_20),
+        "higher_timeframe_context": pre_breakout_context,
+        "higher_timeframe_not_opposing": bool(higher_timeframe_not_opposing),
+        "previous_breakouts": previous_breakouts,
+        **base_diagnostics,
+    }
+
+
 def _market_structure(candles: list[dict[str, Any]], direction: str, atr: float) -> dict[str, Any]:
     """Measure recent closed-candle structure without using the live candle."""
     if len(candles) < 25 or atr <= 0:
@@ -400,10 +848,12 @@ def _classify_market_and_setup(
     atr: float,
     analysis: dict[str, Any],
     context: dict[str, Any],
+    candles_by_timeframe: dict[str, list[dict[str, Any]]],
+    as_of_epoch: int,
     sniper: bool,
     htf_points: int,
 ) -> dict[str, Any]:
-    """Classify the market regime separately from a confirmed range-edge reversal."""
+    """Classify the market regime and the independent 4H-range/1H-breakout state."""
     closes = [float(c["close"]) for c in candles]
     recent = candles[-30:]
     ema9 = analysis.get("ema9")
@@ -413,6 +863,9 @@ def _classify_market_and_setup(
     close = closes[-1]
 
     structure = _market_structure(candles, direction, atr)
+    breakout_assessment = _assess_range_breakout(
+        candles_by_timeframe, direction, as_of_epoch
+    )
     prior_trend = "NEUTRAL"
     if ema9 is not None and ema21 is not None:
         if ema9 > ema21:
@@ -547,15 +1000,36 @@ def _classify_market_and_setup(
         "RESISTANCE" if sell_range_reversal else None
     )
 
-    if opposite_htf and structure.get("swing_break"):
+    breakout_status = breakout_assessment.get("status")
+    breakout_direction = breakout_assessment.get("breakout_direction")
+    if breakout_status == "FAILED BREAKOUT":
+        setup_type = "FAILED BREAKOUT"
+    elif (
+        breakout_status == "RETEST CONFIRMED"
+        and breakout_direction == direction
+    ):
+        setup_type = "RETEST CONFIRMED"
+        market_condition = "BREAKOUT CONFIRMED"
+    elif (
+        breakout_status == "BREAKOUT CONFIRMED"
+        and breakout_direction == direction
+    ):
+        setup_type = "BREAKOUT CONFIRMED"
+        market_condition = "BREAKOUT CONFIRMED"
+    elif (
+        breakout_status == "BREAKOUT RETEST"
+        and breakout_direction == direction
+    ):
+        setup_type = "BREAKOUT RETEST"
+    elif (
+        breakout_status == "BREAKOUT ATTEMPT"
+        and breakout_direction == direction
+    ):
+        setup_type = "BREAKOUT ATTEMPT"
+    elif opposite_htf and structure.get("swing_break"):
         setup_type = "CONFIRMED REVERSAL"
     elif opposite_htf and (reversal_candle or level_rejection):
         setup_type = "EARLY REVERSAL"
-    elif structure.get("retest"):
-        setup_type = "BREAKOUT RETEST"
-    elif structure.get("breakout"):
-        setup_type = "BREAKOUT"
-        market_condition = "BREAKOUT CONFIRMED"
     elif market_condition == "CHOPPY":
         # Keep the market-state label explicit; ordinary chop is not a
         # support/resistance reversal setup.
@@ -585,6 +1059,7 @@ def _classify_market_and_setup(
         "quality_tier": quality_tier,
         "market_condition": market_condition,
         "market_structure": structure,
+        "breakout_assessment": breakout_assessment,
         "range_reversal": {
             "confirmed": range_reversal_confirmed,
             "boundary": range_reversal_boundary,
@@ -747,7 +1222,8 @@ def analyse_precision_opportunity(
 
     analysis = setup_15m.get("analysis") or {}
     classification_details = _classify_market_and_setup(
-        fifteen_closed, direction, float(atr), analysis, context, sniper, htf_points
+        fifteen_closed, direction, float(atr), analysis, context,
+        candles_by_timeframe, as_of_epoch, sniper, htf_points
     )
     primary_score = max(
         int(setup_15m.get("buy_score") or 0),
