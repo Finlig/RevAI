@@ -569,6 +569,10 @@ function App() {
                       const setupType = item.setup_type || 'UNCLASSIFIED SETUP'
                       const qualityTier = item.quality_tier || item.classification || 'STANDARD'
                       const marketCondition = item.market_condition || 'CONDITION UNAVAILABLE'
+                      const confidenceLabel = item.confidence_label || 'MODERATE'
+                      const riskLevel = item.risk_level || 'STANDARD'
+                      const tradeAction = item.trade_action || 'QUALIFIED SETUP'
+                      const tradeGuidance = item.trade_guidance || 'Apply normal risk controls.'
                       const timeframeMs = { '1D': 86400000, '4H': 14400000, '1H': 3600000, '15M': 900000, '5M': 300000 }[tf]
                       const validUntil = new Date((Math.floor(Date.now() / timeframeMs) + 1) * timeframeMs)
                       const confirmationScore = Math.max(item.buy_score ?? 0, item.sell_score ?? 0)
@@ -581,7 +585,13 @@ function App() {
                           <div className="signal-card-badges">
                             <span className="signal-timeframe-badge">{tf}</span>
                             <span className={`signal-action-badge ${isBuy ? 'buy' : 'sell'}`}>
-                              {isBuy ? 'BUY NOW' : 'SELL NOW'}
+                              {tradeAction === 'NO TRADE'
+                                ? `${item.signal} · NO TRADE`
+                                : tradeAction === 'WAIT FOR CONFIRMATION'
+                                  ? `${item.signal} · WAIT`
+                                  : tradeAction === 'TRADE WITH CAUTION'
+                                    ? `${item.signal} · CAUTION`
+                                    : isBuy ? 'BUY NOW' : 'SELL NOW'}
                             </span>
                             <span className={`signal-setup-badge ${qualityTier.toLowerCase().replaceAll(' ', '-')}`}>
                               {qualityTier}
@@ -595,6 +605,16 @@ function App() {
                           </div>
                           <div className="qualified-signal-timeframe">
                             15M PRIMARY SIGNAL · {marketCondition}
+                          </div>
+                          <div className={`signal-risk-notice ${confidenceLabel.toLowerCase()} ${riskLevel.toLowerCase().replaceAll(' ', '-')}`}>
+                            <div className="signal-risk-heading">
+                              <strong>{confidenceLabel} CONFIDENCE</strong>
+                              <span>{riskLevel} RISK · {tradeAction}</span>
+                            </div>
+                            <p>{tradeGuidance}</p>
+                            {item.risk_flags?.length ? (
+                              <small>Risk flags: {item.risk_flags.join(' · ')}</small>
+                            ) : null}
                           </div>
                           <div className="qualified-signal-levels">
                             <div className="signal-level">
@@ -639,6 +659,10 @@ function App() {
                                 `REVAI GOLD SIGNAL - XAU/USD`,
                                 `${item.signal} | ${tf} | ${setupType} | ${qualityTier}`,
                                 `Market condition: ${marketCondition}`,
+                                `Confidence: ${confidenceLabel}`,
+                                `Risk: ${riskLevel}`,
+                                `Action: ${tradeAction}`,
+                                `Guidance: ${tradeGuidance}`,
                                 `Entry: ${formatPrice(item.entry)}`,
                                 `Stop Loss: ${formatPrice(item.stop_loss)}`,
                                 `TP1: ${formatPrice(item.tp1)}`,
