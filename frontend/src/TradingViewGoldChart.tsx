@@ -16,7 +16,7 @@ import { type PrecisionSignal } from './revai'
 
 type Timeframe = '5M' | '15M' | '1H' | '4H' | '1D'
 type Candle = { epoch: number; open: number; high: number; low: number; close: number }
-type Props = { apiBase: string; signal?: PrecisionSignal }
+type Props = { apiBase: string; signal?: PrecisionSignal; theme?: 'dark' | 'light' }
 type OverlayState = { ema: boolean; bollinger: boolean; levels: boolean; patterns: boolean }
 
 const TIMEFRAMES: Timeframe[] = ['5M', '15M', '1H', '4H', '1D']
@@ -47,7 +47,7 @@ function price(value?: number) {
     : value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 }
 
-export default function TradingViewGoldChart({ apiBase, signal }: Props) {
+export default function TradingViewGoldChart({ apiBase, signal, theme = 'dark' }: Props) {
   const hostRef = useRef<HTMLDivElement>(null)
   const chartRef = useRef<IChartApi | null>(null)
   const candleSeriesRef = useRef<ISeriesApi<'Candlestick'> | null>(null)
@@ -104,16 +104,16 @@ export default function TradingViewGoldChart({ apiBase, signal }: Props) {
       width: host.clientWidth || 800,
       height: 440,
       layout: {
-       background: { type: ColorType.Solid, color: '#11110f' },
-        textColor: '#aaa392',
+        background: { type: ColorType.Solid, color: theme === 'light' ? '#ffffff' : '#11110f' },
+        textColor: theme === 'light' ? '#68645b' : '#aaa392',
         fontFamily: 'Poppins, sans-serif',
       },
       grid: {
-        vertLines: { color: '#25241f' },
-        horzLines: { color: '#25241f' },
+        vertLines: { color: theme === 'light' ? '#ece9e2' : '#25241f' },
+        horzLines: { color: theme === 'light' ? '#ece9e2' : '#25241f' },
       },
-      rightPriceScale: { borderColor: '#39362d' },
-      timeScale: { borderColor: '#39362d', timeVisible: true, secondsVisible: false },
+      rightPriceScale: { borderColor: theme === 'light' ? '#dedad1' : '#39362d' },
+      timeScale: { borderColor: theme === 'light' ? '#dedad1' : '#39362d', timeVisible: true, secondsVisible: false },
       crosshair: { vertLine: { color: '#8b7440', labelBackgroundColor: '#8b7440' }, horzLine: { color: '#8b7440', labelBackgroundColor: '#8b7440' } },
       handleScroll: true,
       handleScale: true,
@@ -142,7 +142,7 @@ export default function TradingViewGoldChart({ apiBase, signal }: Props) {
       candleSeriesRef.current = null
       markerApiRef.current = null
     }
-  }, [])
+  }, [theme])
 
   useEffect(() => {
     const chart = chartRef.current
