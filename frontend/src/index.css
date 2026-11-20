@@ -1225,7 +1225,26 @@ footer { border-top: 1px solid var(--border); margin-top: 27px; padding-top: 15p
 .theme-toggle:hover { filter: brightness(1.08); }
 :root[data-theme='dark'] { color-scheme: dark; }
 :root[data-theme='light'] .signal-risk-heading strong { color: #806018; }
-@media(max-width:600px) {
-  .theme-toggle { width: 35px; min-width: 35px; padding: 0; }
+.theme-toggle {
+  flex: 0 0 auto;
+  min-width: 104px;
+  min-height: 36px;
+  border: 1px solid #806b2c;
+  cursor: pointer;
+  position: relative;
+  z-index: 2;
+}
+@media(max-width:700px) {
+  .top-actions { gap: 9px; }
+  .top-actions .market-status,
+  .top-actions .icon-button[aria-label="Help"] { display: none; }
+  .theme-toggle {
+    width: 36px;
+    min-width: 36px;
+    height: 36px;
+    min-height: 36px;
+    padding: 0;
+    border-radius: 8px;
+  }
   .theme-toggle span { display: none; }
 }
