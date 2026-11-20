@@ -7,7 +7,7 @@ import {
   ChevronRight, CircleHelp, Clock3, Crosshair, Gauge,
   LayoutDashboard, LockKeyhole, Radio,
   Settings, ShieldCheck, UserRound, Wallet,
-  Zap
+  Zap, Sun, Moon
 } from 'lucide-react'
 import './index.css'
 
@@ -66,6 +66,10 @@ const navigation = [
 ]
 
 function App() {
+  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
+    const savedTheme = window.localStorage.getItem('revai-theme')
+    return savedTheme === 'light' ? 'light' : 'dark'
+  })
   const [activeNav, setActiveNav] = useState('Overview')
   const [settingsTab, setSettingsTab] = useState('Profile')
   const [notice, setNotice] = useState('')
@@ -133,6 +137,13 @@ function App() {
     loadHistory()
     return () => { active = false }
   }, [historyPage])
+
+  useEffect(() => {
+    window.localStorage.setItem('revai-theme', theme)
+    document.documentElement.dataset.theme = theme
+  }, [theme])
+
+  const toggleTheme = () => setTheme(current => current === 'dark' ? 'light' : 'dark')
 
   const timeframeSignals = marketData?.signals ?? {}
 
@@ -236,7 +247,7 @@ function App() {
   )
 
   return (
-    <div className="app-shell">
+    <div className="app-shell" data-theme={theme}>
       <aside className="sidebar">
         <div className="brand">
           <div className="brand-mark"><Activity size={22} /></div>
@@ -278,6 +289,16 @@ function App() {
         <header className="topbar">
           <div className="breadcrumb">Workspace <ChevronRight size={14} /> <strong>{activeNav}</strong></div>
           <div className="top-actions">
+            <button
+              className="theme-toggle"
+              type="button"
+              onClick={toggleTheme}
+              aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+              title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            >
+              {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
+              <span>{theme === 'dark' ? 'Light mode' : 'Dark mode'}</span>
+            </button>
             <div className="market-status"><span className={`status-dot ${marketData ? "" : "muted"}`} /> Market feed <span>{apiError ? "Connection error" : loading ? "Connecting..." : "Connected"}</span></div>
             <button className="icon-button" aria-label="Notifications"><Bell size={18} /></button>
             <button className="icon-button" aria-label="Help"><CircleHelp size={18} /></button>
@@ -322,6 +343,7 @@ function App() {
               <TradingViewGoldChart
                 apiBase={REVAI_API}
                 signal={timeframeSignals['15M']}
+                theme={theme}
               />
 
               <section className="metrics-grid">
