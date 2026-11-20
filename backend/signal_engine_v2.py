@@ -666,11 +666,16 @@ def _assess_range_breakout(
         latest_side = "SELL"
 
     strong_body = body >= float(atr_1h)
+    directional_candle = bool(
+        (latest_side == "BUY" and close > open_price)
+        or (latest_side == "SELL" and close < open_price)
+    )
     small_breakout_wick = bool(
         (latest_side == "BUY" and upper_wick <= candle_range * 0.20)
         or (latest_side == "SELL" and lower_wick <= candle_range * 0.20)
     )
     supporting_checks = {
+        "directional_breakout_candle": directional_candle,
         "strong_body_at_least_1_atr": bool(strong_body),
         "small_wick_on_breakout_side": bool(small_breakout_wick),
         "adx_rising_above_25": bool(adx_rising_above_25),
@@ -778,7 +783,7 @@ def _assess_range_breakout(
 
     elif latest_side:
         breakout_direction = latest_side
-        if supporting_score >= supporting_required:
+        if directional_candle and supporting_score >= supporting_required:
             status = "BREAKOUT CONFIRMED"
             status_reason = "The 1H close cleared the 4H range and passed at least three supporting confirmations."
         else:
@@ -805,6 +810,7 @@ def _assess_range_breakout(
         "atr_1h": round(float(atr_1h), 5),
         "candle_body": round(body, 5),
         "candle_body_atr": round(body / float(atr_1h), 3),
+        "directional_breakout_candle": bool(directional_candle),
         "upper_wick_ratio": round(upper_wick / candle_range, 3),
         "lower_wick_ratio": round(lower_wick / candle_range, 3),
         "supporting_checks": supporting_checks,
