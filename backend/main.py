@@ -1,5 +1,9 @@
 import time
 import sqlite3
+import os
+import json
+import urllib.request
+import urllib.error
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -17,6 +21,94 @@ from market_data import (
 
 from signal_engine_v2 import analyse_precision_opportunity
 
+
+
+
+
+def build_telegram_signal_message(item, timeframe, signal_epoch, signal_key):
+    direction = item.get("signal", "SIGNAL")
+    emoji = "🟢" if direction == "BUY" else "🔴"
+    issued = time.strftime("%Y-%m-%d %H:%M UTC", time.gmtime(signal_epoch))
+
+    def price(value):
+        return f"{float(value):.2f}" if value is not None else "—"
+
+    return "\\n".join([
+        f"{emoji} REVAI GOLD SIGNAL",
+        "━━━━━━━━━━━━━━━━━━",
+        "Pair: XAU/USD",
+        f"Direction: {direction}",
+        f"Timeframe: {timeframe}",
+        f"Setup: {item.get('setup_type') or item.get('quality_tier') or 'Qualified setup'}",
+        f"Entry: {price(item.get('entry'))}",
+        f"Stop Loss: {price(item.get('stop_loss'))}",
+        f"TP1: {price(item.get('tp1'))}",
+        f"TP2: {price(item.get('tp2'))}",
+        f"TP3: {price(item.get('tp3'))}",
+        f"Generated: {issued}",
+        "━━━━━━━━━━━━━━━━━━",
+        "Manage risk. Automated market signal; not financial advice.",
+        f"Ref: {signal_key}",
+    ])
+
+
+def deliver_pending_telegram_signals():
+    """Deliver queued signals and retain failures for a later API refresh retry."""
+    bot_token = os.getenv("TELEGRAM_BOT_TOKEN", "").strip()
+    chat_id = os.getenv("TELEGRAM_CHAT_ID", "").strip()
+    if not bot_token or not chat_id:
+        return
+
+    init_history_db()
+    with sqlite3.connect(HISTORY_DB) as db:
+        pending = db.execute("""
+            SELECT signal_key, message FROM telegram_outbox
+            WHERE status = 'PENDING'
+            ORDER BY created_at ASC
+            LIMIT 10
+        """).fetchall()
+
+    for signal_key, message in pending:
+        payload = json.dumps({
+            "chat_id": chat_id,
+            "text": message,
+            "disable_web_page_preview": True,
+        }).encode("utf-8")
+        request = urllib.request.Request(
+            f"https://api.telegram.org/bot{bot_token}/sendMessage",
+            data=payload,
+            headers={"Content-Type": "application/json"},
+            method="POST",
+        )
+        try:
+            with urllib.request.urlopen(request, timeout=8) as response:
+                result = json.loads(response.read().decode("utf-8"))
+            if result.get("ok"):
+                with sqlite3.connect(HISTORY_DB) as db:
+                    db.execute("""
+                        UPDATE telegram_outbox
+                        SET status = 'SENT', sent_at = ?, last_error = NULL
+                        WHERE signal_key = ?
+                    """, (int(time.time()), signal_key))
+                    db.commit()
+                print(f"Telegram signal delivered: {signal_key}")
+            else:
+                with sqlite3.connect(HISTORY_DB) as db:
+                    db.execute("""
+                        UPDATE telegram_outbox
+                        SET attempts = attempts + 1, last_error = ?
+                        WHERE signal_key = ?
+                    """, (result.get("description", "Telegram API rejected message"), signal_key))
+                    db.commit()
+        except (urllib.error.URLError, TimeoutError, ValueError) as error:
+            with sqlite3.connect(HISTORY_DB) as db:
+                db.execute("""
+                    UPDATE telegram_outbox
+                    SET attempts = attempts + 1, last_error = ?
+                    WHERE signal_key = ?
+                """, (str(error)[:500], signal_key))
+                db.commit()
+            print(f"Telegram delivery error for {signal_key}: {error}")
 
 
 # Persistent signal history
@@ -65,6 +157,18 @@ def init_history_db():
         for column, sql in migrations.items():
             if column not in columns:
                 db.execute(sql)
+
+        db.execute("""
+            CREATE TABLE IF NOT EXISTS telegram_outbox (
+                signal_key TEXT PRIMARY KEY,
+                message TEXT NOT NULL,
+                status TEXT NOT NULL DEFAULT 'PENDING',
+                attempts INTEGER NOT NULL DEFAULT 0,
+                last_error TEXT,
+                created_at INTEGER NOT NULL,
+                sent_at INTEGER
+            )
+        """)
 
         db.commit()
 
@@ -233,7 +337,7 @@ def record_qualified_signals(signals, candles_by_timeframe, as_of_epoch):
             if any(item.get(field) is None for field in required):
                 continue
 
-            db.execute("""
+            cursor = db.execute("""
                 INSERT OR IGNORE INTO signal_history (
                     signal_key, symbol, issued_at, timeframe, signal_type,
                     direction, entry, stop_loss, tp1, tp2, tp3,
@@ -247,8 +351,21 @@ def record_qualified_signals(signals, candles_by_timeframe, as_of_epoch):
                 signal_epoch + (duration * 3), signal_epoch
             ))
 
+            # Deliver once only: repeated API refreshes hit the same unique
+            # signal_key and therefore do not resend an already-recorded signal.
+            if cursor.rowcount == 1:
+                message = build_telegram_signal_message(
+                    item, timeframe, signal_epoch, signal_key
+                )
+                db.execute("""
+                    INSERT OR IGNORE INTO telegram_outbox (
+                        signal_key, message, status, created_at
+                    ) VALUES (?, ?, 'PENDING', ?)
+                """, (signal_key, message, int(time.time())))
+
         db.commit()
 
+    deliver_pending_telegram_signals()
     monitor_signal_history(candles_by_timeframe, as_of_epoch)
 
 
