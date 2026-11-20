@@ -29,6 +29,11 @@ export interface PrecisionSignal {
   setup_type?: string
   quality_tier?: 'QUICK SCALP' | 'STANDARD' | 'SNIPER' | string
   market_condition?: string
+  confidence_label?: 'LOW' | 'MODERATE' | 'HIGH' | string
+  risk_level?: 'STANDARD' | 'ELEVATED' | 'VERY HIGH' | string
+  trade_action?: 'QUALIFIED SETUP' | 'TRADE WITH CAUTION' | 'WAIT FOR CONFIRMATION' | 'NO TRADE' | string
+  trade_guidance?: string
+  risk_flags?: string[]
   classification_details?: {
     setup_type?: string
     quality_tier?: string
