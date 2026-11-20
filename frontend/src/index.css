@@ -1239,12 +1239,32 @@ footer { border-top: 1px solid var(--border); margin-top: 27px; padding-top: 15p
   .top-actions .market-status,
   .top-actions .icon-button[aria-label="Help"] { display: none; }
   .theme-toggle {
-    width: 36px;
-    min-width: 36px;
-    height: 36px;
-    min-height: 36px;
-    padding: 0;
-    border-radius: 8px;
-  }
-  .theme-toggle span { display: none; }
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 36px;
+  width: 36px;
+  min-width: 36px;
+  height: 36px;
+  min-height: 36px;
+  padding: 0;
+  border: 1px solid #806b2c;
+  border-radius: 8px;
+  background: #19170f;
+  color: #e4c36e;
+  cursor: pointer;
+  position: relative;
+  z-index: 2;
+}
+.theme-toggle:hover { filter: brightness(1.12); }
+.theme-toggle span { display: none; }
+:root[data-theme='light'] .theme-toggle {
+  background: #fbf5e7;
+  border-color: #e5d6b1;
+  color: #806018;
+}
+@media(max-width:700px) {
+  .top-actions { gap: 9px; }
+  .top-actions .market-status,
+  .top-actions .icon-button[aria-label="Notifications"] { display: none; }
 }
