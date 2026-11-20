@@ -967,3 +967,265 @@ footer { border-top: 1px solid var(--border); margin-top: 27px; padding-top: 15p
   background: rgba(223, 119, 112, .12);
   border: 1px solid rgba(223, 119, 112, .45);
 }
+
+
+/* User-selectable light theme. Gold remains the primary brand accent. */
+:root[data-theme='light'] {
+  color-scheme: light;
+  color: #24231f;
+  background: #f4f3ef;
+  --gold: #a77b16;
+  --gold-light: #8b6713;
+  --muted: #77736a;
+  --panel: #ffffff;
+  --border: #e5e1d8;
+}
+:root[data-theme='light'] body,
+:root[data-theme='light'] .app-shell {
+  background: #f4f3ef;
+  color: #24231f;
+}
+:root[data-theme='light'] .sidebar {
+  background: #ffffff;
+  border-right-color: #e5e1d8;
+}
+:root[data-theme='light'] .brand-mark {
+  background: #fbf6e9;
+  border-color: #e6d5a6;
+  color: #9a7118;
+}
+:root[data-theme='light'] .brand small,
+:root[data-theme='light'] .workspace-label { color: #898477; }
+:root[data-theme='light'] .nav-item { color: #6f6b62; }
+:root[data-theme='light'] .nav-item:hover,
+:root[data-theme='light'] .nav-item.active {
+  background: #f8f3e7;
+  border-color: #eadbb7;
+  color: #806018;
+}
+:root[data-theme='light'] .plan-card {
+  background: linear-gradient(140deg,#fffaf0,#f7f1e3);
+  border-color: #e8d9b5;
+}
+:root[data-theme='light'] .plan-card p { color: #777166; }
+:root[data-theme='light'] .profile { border-top-color: #e5e1d8; }
+:root[data-theme='light'] .avatar,
+:root[data-theme='light'] .top-avatar {
+  background: #f5ecd6;
+  border-color: #dfc98e;
+  color: #806018;
+}
+:root[data-theme='light'] .topbar {
+  background: #ffffff;
+  border-bottom-color: #e5e1d8;
+}
+:root[data-theme='light'] .breadcrumb { color: #898477; }
+:root[data-theme='light'] .breadcrumb strong { color: #34312b; }
+:root[data-theme='light'] .market-status { color: #6e6a61; }
+:root[data-theme='light'] .market-status span:last-child { color: #858075; }
+:root[data-theme='light'] .icon-button { color: #68645b; }
+:root[data-theme='light'] .subtitle { color: #77736a; }
+:root[data-theme='light'] .date-button,
+:root[data-theme='light'] .refresh-button {
+  background: #ffffff;
+  border-color: #e1d9c8;
+  color: #615b4d;
+}
+:root[data-theme='light'] .market-banner {
+  background: linear-gradient(105deg,#fff8e8,#ffffff 65%,#fbf5e8);
+  border-color: #e7d7ae;
+}
+:root[data-theme='light'] .gold-symbol {
+  background: #fbf3df;
+  border-color: #e4d09a;
+  color: #8b6713;
+}
+:root[data-theme='light'] .instrument-sub,
+:root[data-theme='light'] .feed-state,
+:root[data-theme='light'] .banner-meta small { color: #777166; }
+:root[data-theme='light'] .symbol-tag { border-color: #e3d2a8; }
+:root[data-theme='light'] .banner-divider { background: #e7dfcf; }
+:root[data-theme='light'] .metric-card,
+:root[data-theme='light'] .content-panel,
+:root[data-theme='light'] .scanner-panel,
+:root[data-theme='light'] .settings-menu,
+:root[data-theme='light'] .settings-content {
+  background: #ffffff;
+  border-color: #e5e1d8;
+}
+:root[data-theme='light'] .metric-top,
+:root[data-theme='light'] .section-heading p,
+:root[data-theme='light'] .panel-heading p,
+:root[data-theme='light'] .scanner-status,
+:root[data-theme='light'] .metric-value small,
+:root[data-theme='light'] .metric-foot,
+:root[data-theme='light'] .pending-label { color: #77736a; }
+:root[data-theme='light'] .metric-value { color: #292720; }
+:root[data-theme='light'] .metric-value.neutral { color: #806018; }
+:root[data-theme='light'] .scanner-toolbar,
+:root[data-theme='light'] .panel-heading { border-color: #e5e1d8; }
+:root[data-theme='light'] .toolbar-label,
+:root[data-theme='light'] .timeframe-list button { color: #777166; }
+:root[data-theme='light'] .timeframe-list button.selected {
+  color: #76570f;
+  background: #f8f1df;
+  border-color: #e5d3a4;
+}
+:root[data-theme='light'] .signal-empty h3 { color: #292720; }
+:root[data-theme='light'] .signal-empty p { color: #77736a; }
+:root[data-theme='light'] .radar-icon {
+  background: #fbf5e7;
+  border-color: #e7d9b7;
+  color: #967018;
+}
+:root[data-theme='light'] .waiting-pill {
+  background: #fbf5e7;
+  border-color: #e7d9b7;
+  color: #806018;
+}
+:root[data-theme='light'] .tf-track { background: #e9e6df; }
+:root[data-theme='light'] .tf-row > strong,
+:root[data-theme='light'] .risk-list div { color: #6e695f; }
+:root[data-theme='light'] .risk-list strong { color: #38352e; }
+:root[data-theme='light'] .settings-tab { color: #625e55; }
+:root[data-theme='light'] .settings-tab.selected {
+  background: #f8f1df;
+  color: #806018;
+}
+:root[data-theme='light'] .settings-heading p,
+:root[data-theme='light'] .profile-preview p { color: #77736a; }
+:root[data-theme='light'] .settings-content label { color: #625e55; }
+:root[data-theme='light'] .settings-content input {
+  color: #292720;
+  background: #ffffff;
+  border-color: #ded9ce;
+}
+:root[data-theme='light'] .security-note {
+  background: #f8f6ef;
+  border-color: #e5e1d8;
+  color: #68645b;
+}
+:root[data-theme='light'] .current-plan {
+  background: #fbf6e9;
+  border-color: #e8d9b5;
+}
+:root[data-theme='light'] .current-plan p { color: #77736a; }
+:root[data-theme='light'] .upgrade-feature { color: #5f5b52; }
+:root[data-theme='light'] .signal-card,
+:root[data-theme='light'] .qualified-signal-card,
+:root[data-theme='light'] .history-dashboard,
+:root[data-theme='light'] .overview-panel,
+:root[data-theme='light'] .overview-metric {
+  background: #ffffff;
+  border-color: #e5e1d8;
+  color: #292720;
+}
+:root[data-theme='light'] .signal-card-body p,
+:root[data-theme='light'] .signal-card-details,
+:root[data-theme='light'] .signal-card-footer,
+:root[data-theme='light'] .qualified-signal-label,
+:root[data-theme='light'] .qualified-signal-timeframe,
+:root[data-theme='light'] .signal-level span,
+:root[data-theme='light'] .signal-validity,
+:root[data-theme='light'] .signal-confirmation,
+:root[data-theme='light'] .overview-footer-note { color: #77736a; }
+:root[data-theme='light'] .signal-quick-metrics div {
+  background: #faf9f6;
+  border-color: #e5e1d8;
+}
+:root[data-theme='light'] .signal-quick-metrics span { color: #77736a; }
+:root[data-theme='light'] .signal-quick-metrics strong { color: #705515; }
+:root[data-theme='light'] .signal-technical-details {
+  border-top-color: #e5e1d8;
+}
+:root[data-theme='light'] .signal-technical-details summary { color: #806018; }
+:root[data-theme='light'] .signal-risk-notice { background: #fbf8ef; }
+:root[data-theme='light'] .signal-risk-notice.low,
+:root[data-theme='light'] .signal-risk-notice.very-high { background: #fff5f3; }
+:root[data-theme='light'] .signal-risk-notice p { color: #625d53; }
+:root[data-theme='light'] .signal-risk-heading span { color: #6e6043; }
+:root[data-theme='light'] .history-table th {
+  background: #f7f5ef;
+  color: #6c675d;
+}
+:root[data-theme='light'] .history-table td {
+  border-color: #e9e5dc;
+  color: #38352e;
+}
+:root[data-theme='light'] .overview-market-banner {
+  background: linear-gradient(105deg,#fff8e8,#ffffff 65%,#fbf5e8);
+  border-color: #e7d7ae;
+}
+:root[data-theme='light'] .overview-market-price strong,
+:root[data-theme='light'] .overview-instrument strong { color: #292720; }
+:root[data-theme='light'] .overview-market-price span,
+:root[data-theme='light'] .overview-market-price small,
+:root[data-theme='light'] .overview-instrument p { color: #77736a; }
+:root[data-theme='light'] .overview-panel-heading,
+:root[data-theme='light'] .overview-queue-row { border-color: #e9e5dc; }
+:root[data-theme='light'] .overview-queue-tf,
+:root[data-theme='light'] .overview-queue-level,
+:root[data-theme='light'] .overview-queue-stop { color: #6e695f; }
+:root[data-theme='light'] .overview-precision-details,
+:root[data-theme='light'] .overview-precision-reason { color: #625e55; }
+:root[data-theme='light'] .gold-chart-canvas,
+:root[data-theme='light'] .gold-chart-message {
+  background: #ffffff;
+  border-color: #e5e1d8;
+}
+:root[data-theme='light'] .gold-chart-axis-label { fill: #77736a; }
+:root[data-theme='light'] .gold-chart-gridline { stroke: #e8e5de; }
+:root[data-theme='light'] .gold-chart-price-row>div:first-child span,
+:root[data-theme='light'] .gold-chart-instrument small,
+:root[data-theme='light'] .gold-chart-footer { color: #77736a; }
+:root[data-theme='light'] .gold-chart-price-row>div:first-child strong,
+:root[data-theme='light'] .gold-chart-instrument strong { color: #292720; }
+:root[data-theme='light'] .gold-timeframe-controls button {
+  background: #ffffff;
+  border-color: #e1ddd4;
+  color: #625e55;
+}
+:root[data-theme='light'] .gold-timeframe-controls button.selected {
+  background: #f5ecd5;
+  border-color: #dfc98e;
+  color: #76570f;
+}
+:root[data-theme='light'] footer { color: #77736a; border-top-color: #e5e1d8; }
+:root[data-theme='light'] .mobile-bottom-nav {
+  background: #ffffff;
+  border-top-color: #e5e1d8;
+}
+:root[data-theme='light'] .mobile-bottom-nav button { color: #77736a; }
+:root[data-theme='light'] .mobile-bottom-nav button.active { color: #806018; }
+:root[data-theme='light'] .toast {
+  background: #ffffff;
+  color: #292720;
+  border-color: #e5e1d8;
+}
+:root[data-theme='light'] .theme-toggle {
+  background: #fbf5e7;
+  border-color: #e5d6b1;
+  color: #806018;
+}
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 35px;
+  padding: 0 11px;
+  border: 1px solid #4a4028;
+  border-radius: 7px;
+  background: #19170f;
+  color: #e4c36e;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.theme-toggle:hover { filter: brightness(1.08); }
+:root[data-theme='dark'] { color-scheme: dark; }
+:root[data-theme='light'] .signal-risk-heading strong { color: #806018; }
+@media(max-width:600px) {
+  .theme-toggle { width: 35px; min-width: 35px; padding: 0; }
+  .theme-toggle span { display: none; }
+}
