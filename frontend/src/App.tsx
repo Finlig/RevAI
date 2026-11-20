@@ -289,6 +289,9 @@ function App() {
         <header className="topbar">
           <div className="breadcrumb">Workspace <ChevronRight size={14} /> <strong>{activeNav}</strong></div>
           <div className="top-actions">
+            <div className="market-status"><span className={`status-dot ${marketData ? "" : "muted"}`} /> Market feed <span>{apiError ? "Connection error" : loading ? "Connecting..." : "Connected"}</span></div>
+            <button className="icon-button" aria-label="Notifications"><Bell size={18} /></button>
+            <button className="icon-button" aria-label="Help"><CircleHelp size={18} /></button>
             <button
               className="theme-toggle"
               type="button"
@@ -296,12 +299,9 @@ function App() {
               aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
               title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
             >
-              {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
+              {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
               <span>{theme === 'dark' ? 'Light mode' : 'Dark mode'}</span>
             </button>
-            <div className="market-status"><span className={`status-dot ${marketData ? "" : "muted"}`} /> Market feed <span>{apiError ? "Connection error" : loading ? "Connecting..." : "Connected"}</span></div>
-            <button className="icon-button" aria-label="Notifications"><Bell size={18} /></button>
-            <button className="icon-button" aria-label="Help"><CircleHelp size={18} /></button>
             <div className="top-avatar">R</div>
           </div>
         </header>
