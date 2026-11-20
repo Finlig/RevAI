@@ -955,3 +955,15 @@ footer { border-top: 1px solid var(--border); margin-top: 27px; padding-top: 15p
 @media(max-width:600px) {
   .signal-risk-heading { align-items: flex-start; flex-direction: column; gap: 5px; }
 }
+
+
+.signal-action-badge.caution {
+  color: #f0c878;
+  background: rgba(213, 163, 78, .12);
+  border: 1px solid rgba(213, 163, 78, .4);
+}
+.signal-action-badge.no-trade {
+  color: #f08b83;
+  background: rgba(223, 119, 112, .12);
+  border: 1px solid rgba(223, 119, 112, .45);
+}
