@@ -1,10 +1,5 @@
 import time
 import sqlite3
-import os
-import json
-import urllib.request
-import urllib.error
-import threading
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -22,203 +17,6 @@ from market_data import (
 
 from signal_engine_v2 import analyse_precision_opportunity
 
-
-
-
-
-def build_telegram_signal_message(item, timeframe, signal_epoch, signal_key):
-    direction = item.get("signal", "SIGNAL")
-    emoji = "🟢" if direction == "BUY" else "🔴"
-    issued = time.strftime("%Y-%m-%d %H:%M UTC", time.gmtime(signal_epoch))
-
-    def price(value):
-        return f"{float(value):.2f}" if value is not None else "—"
-
-    return "\n".join([
-        f"{emoji} REVAI GOLD SIGNAL",
-        "━━━━━━━━━━━━━━━━━━",
-        "Pair: XAU/USD",
-        f"Direction: {direction}",
-        f"Timeframe: {timeframe}",
-        f"Setup: {item.get('setup_type') or item.get('quality_tier') or 'Qualified setup'}",
-        f"Entry: {price(item.get('entry'))}",
-        f"Stop Loss: {price(item.get('stop_loss'))}",
-        f"TP1: {price(item.get('tp1'))}",
-        f"TP2: {price(item.get('tp2'))}",
-        f"TP3: {price(item.get('tp3'))}",
-        f"Generated: {issued}",
-        "━━━━━━━━━━━━━━━━━━",
-        "Manage risk. Automated market signal; not financial advice.",
-        f"Ref: {signal_key}",
-    ])
-
-
-TELEGRAM_POLL_INTERVAL_SECONDS = 2
-TELEGRAM_REQUEST_TIMEOUT_SECONDS = 8
-TELEGRAM_MAX_ATTEMPTS = 8
-
-_TELEGRAM_WORKER_LOCK = threading.Lock()
-_TELEGRAM_WORKER_STARTED = False
-_TELEGRAM_STOP_EVENT = threading.Event()
-
-
-def _claim_pending_telegram_signal():
-    """Claim one queued message without doing network I/O in the API process."""
-    now = int(time.time())
-    with sqlite3.connect(HISTORY_DB, timeout=15) as db:
-        db.execute("PRAGMA busy_timeout = 15000")
-        db.execute("BEGIN IMMEDIATE")
-
-        # Recover a message whose worker process/thread stopped while sending.
-        db.execute("""
-            UPDATE telegram_outbox
-            SET status = 'PENDING', locked_until = NULL
-            WHERE status = 'SENDING' AND COALESCE(locked_until, 0) <= ?
-        """, (now,))
-
-        row = db.execute("""
-            SELECT signal_key, message, attempts
-            FROM telegram_outbox
-            WHERE status = 'PENDING'
-              AND COALESCE(next_attempt_at, 0) <= ?
-              AND attempts < ?
-            ORDER BY created_at ASC
-            LIMIT 1
-        """, (now, TELEGRAM_MAX_ATTEMPTS)).fetchone()
-
-        if row is None:
-            db.commit()
-            return None
-
-        signal_key, message, attempts = row
-        db.execute("""
-            UPDATE telegram_outbox
-            SET status = 'SENDING', locked_until = ?
-            WHERE signal_key = ? AND status = 'PENDING'
-        """, (now + TELEGRAM_REQUEST_TIMEOUT_SECONDS + 20, signal_key))
-        db.commit()
-
-    return signal_key, message, attempts
-
-
-def _mark_telegram_sent(signal_key):
-    with sqlite3.connect(HISTORY_DB, timeout=15) as db:
-        db.execute("""
-            UPDATE telegram_outbox
-            SET status = 'SENT', sent_at = ?, last_error = NULL,
-                locked_until = NULL
-            WHERE signal_key = ?
-        """, (int(time.time()), signal_key))
-        db.commit()
-
-
-def _mark_telegram_failed(signal_key, attempts, error):
-    next_attempt = attempts + 1
-    failed_permanently = next_attempt >= TELEGRAM_MAX_ATTEMPTS
-    retry_delay = min(600, 5 * (2 ** min(next_attempt - 1, 7)))
-    next_status = "FAILED" if failed_permanently else "PENDING"
-    next_attempt_at = 0 if failed_permanently else int(time.time()) + retry_delay
-
-    with sqlite3.connect(HISTORY_DB, timeout=15) as db:
-        db.execute("""
-            UPDATE telegram_outbox
-            SET status = ?, attempts = ?, next_attempt_at = ?,
-                locked_until = NULL, last_error = ?
-            WHERE signal_key = ?
-        """, (
-            next_status,
-            next_attempt,
-            next_attempt_at,
-            str(error)[:500],
-            signal_key,
-        ))
-        db.commit()
-
-    if failed_permanently:
-        print(f"Telegram delivery stopped after {next_attempt} attempts: {signal_key}")
-    else:
-        print(
-            f"Telegram delivery deferred for {retry_delay}s "
-            f"(attempt {next_attempt}): {signal_key} — {error}"
-        )
-
-
-def _telegram_delivery_worker():
-    """
-    Send committed outbox rows on a dedicated daemon thread.
-
-    Signal generation never waits for Telegram: this worker polls the
-    database independently and performs all Telegram network I/O here.
-    """
-    while not _TELEGRAM_STOP_EVENT.is_set():
-        bot_token = os.getenv("TELEGRAM_BOT_TOKEN", "").strip()
-        chat_id = os.getenv("TELEGRAM_CHAT_ID", "").strip()
-
-        if not bot_token or not chat_id:
-            _TELEGRAM_STOP_EVENT.wait(10)
-            continue
-
-        try:
-            pending = _claim_pending_telegram_signal()
-            if pending is None:
-                _TELEGRAM_STOP_EVENT.wait(TELEGRAM_POLL_INTERVAL_SECONDS)
-                continue
-
-            signal_key, message, attempts = pending
-            payload = json.dumps({
-                "chat_id": chat_id,
-                "text": message,
-                "disable_web_page_preview": True,
-            }).encode("utf-8")
-            request = urllib.request.Request(
-                f"https://api.telegram.org/bot{bot_token}/sendMessage",
-                data=payload,
-                headers={"Content-Type": "application/json"},
-                method="POST",
-            )
-
-            try:
-                with urllib.request.urlopen(
-                    request,
-                    timeout=TELEGRAM_REQUEST_TIMEOUT_SECONDS,
-                ) as response:
-                    result = json.loads(response.read().decode("utf-8"))
-
-                if not result.get("ok"):
-                    raise RuntimeError(
-                        result.get("description", "Telegram API rejected message")
-                    )
-
-                _mark_telegram_sent(signal_key)
-                print(f"Telegram signal delivered: {signal_key}")
-
-            except Exception as error:
-                _mark_telegram_failed(signal_key, attempts, error)
-
-        except Exception as error:
-            # A Telegram/database worker error must never escape into an API
-            # request or stop the signal-generation endpoint.
-            print(f"Telegram worker error: {error}")
-            _TELEGRAM_STOP_EVENT.wait(TELEGRAM_POLL_INTERVAL_SECONDS)
-
-
-def start_telegram_delivery_worker():
-    """Start one independent Telegram sender thread per backend process."""
-    global _TELEGRAM_WORKER_STARTED
-
-    with _TELEGRAM_WORKER_LOCK:
-        if _TELEGRAM_WORKER_STARTED:
-            return
-
-        _TELEGRAM_STOP_EVENT.clear()
-        worker = threading.Thread(
-            target=_telegram_delivery_worker,
-            name="revai-telegram-outbox",
-            daemon=True,
-        )
-        worker.start()
-        _TELEGRAM_WORKER_STARTED = True
-        print("RevAI Telegram outbox worker started independently.")
 
 
 # Persistent signal history
@@ -266,30 +64,6 @@ def init_history_db():
         }
         for column, sql in migrations.items():
             if column not in columns:
-                db.execute(sql)
-
-        db.execute("""
-            CREATE TABLE IF NOT EXISTS telegram_outbox (
-                signal_key TEXT PRIMARY KEY,
-                message TEXT NOT NULL,
-                status TEXT NOT NULL DEFAULT 'PENDING',
-                attempts INTEGER NOT NULL DEFAULT 0,
-                last_error TEXT,
-                created_at INTEGER NOT NULL,
-                sent_at INTEGER
-            )
-        """)
-
-        # Migrate existing outbox tables without deleting queued messages.
-        outbox_columns = {
-            row[1] for row in db.execute("PRAGMA table_info(telegram_outbox)")
-        }
-        outbox_migrations = {
-            "next_attempt_at": "ALTER TABLE telegram_outbox ADD COLUMN next_attempt_at INTEGER NOT NULL DEFAULT 0",
-            "locked_until": "ALTER TABLE telegram_outbox ADD COLUMN locked_until INTEGER",
-        }
-        for column, sql in outbox_migrations.items():
-            if column not in outbox_columns:
                 db.execute(sql)
 
         db.commit()
@@ -459,7 +233,7 @@ def record_qualified_signals(signals, candles_by_timeframe, as_of_epoch):
             if any(item.get(field) is None for field in required):
                 continue
 
-            cursor = db.execute("""
+            db.execute("""
                 INSERT OR IGNORE INTO signal_history (
                     signal_key, symbol, issued_at, timeframe, signal_type,
                     direction, entry, stop_loss, tp1, tp2, tp3,
@@ -473,32 +247,12 @@ def record_qualified_signals(signals, candles_by_timeframe, as_of_epoch):
                 signal_epoch + (duration * 3), signal_epoch
             ))
 
-            # Deliver once only: repeated API refreshes hit the same unique
-            # signal_key and therefore do not resend an already-recorded signal.
-            if cursor.rowcount == 1:
-                message = build_telegram_signal_message(
-                    item, timeframe, signal_epoch, signal_key
-                )
-                db.execute("""
-                    INSERT OR IGNORE INTO telegram_outbox (
-                        signal_key, message, status, created_at
-                    ) VALUES (?, ?, 'PENDING', ?)
-                """, (signal_key, message, int(time.time())))
-
         db.commit()
 
-    # Telegram delivery is intentionally NOT called here. The signal and
-    # outbox row are committed first; a separate worker sends notifications.
     monitor_signal_history(candles_by_timeframe, as_of_epoch)
 
 
 app = FastAPI(title="RevAI API", version="1.0.0")
-
-
-@app.on_event("startup")
-async def start_revai_telegram_worker():
-    init_history_db()
-    start_telegram_delivery_worker()
 
 app.add_middleware(
     CORSMiddleware,
