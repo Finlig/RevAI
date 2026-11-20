@@ -260,7 +260,7 @@ export default function TradingViewGoldChart({ apiBase, signal, theme = 'dark' }
         }
       })
     }
-  }, [candles, indicators, overlays, signal])
+  }, [candles, indicators, overlays, signal, theme])
 
   const latest = candles[candles.length - 1]
   const toggle = (key: keyof OverlayState) =>
