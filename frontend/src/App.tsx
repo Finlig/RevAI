@@ -13,6 +13,50 @@ import './index.css'
 
 const timeframes = ['15M'] as const
 
+type TradingSession = {
+  name: string
+  timezone: string
+  openHour: number
+  closeHour: number
+  localTime: string
+  isOpen: boolean
+}
+
+function getTradingSessions(): TradingSession[] {
+  const now = new Date()
+  const utcDay = now.getUTCDay()
+  const weekend = utcDay === 0 || utcDay === 6
+
+  const sessions = [
+    { name: 'Sydney', timezone: 'Australia/Sydney', openHour: 8, closeHour: 17 },
+    { name: 'Tokyo', timezone: 'Asia/Tokyo', openHour: 9, closeHour: 18 },
+    { name: 'London', timezone: 'Europe/London', openHour: 8, closeHour: 17 },
+    { name: 'New York', timezone: 'America/New_York', openHour: 8, closeHour: 17 },
+  ]
+
+  return sessions.map(session => {
+    const parts = new Intl.DateTimeFormat('en-GB', {
+      timeZone: session.timezone,
+      hour: '2-digit',
+      minute: '2-digit',
+      hourCycle: 'h23',
+    }).formatToParts(now)
+    const hour = Number(parts.find(part => part.type === 'hour')?.value ?? 0)
+    const minute = Number(parts.find(part => part.type === 'minute')?.value ?? 0)
+    const minutesNow = hour * 60 + minute
+    const isOpen = !weekend &&
+      minutesNow >= session.openHour * 60 &&
+      minutesNow < session.closeHour * 60
+
+    return {
+      ...session,
+      localTime: `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`,
+      isOpen,
+    }
+  })
+}
+
+
 const navigation = [
   { name: 'Overview', icon: LayoutDashboard },
   { name: 'Analysis', icon: CandlestickChart },
@@ -706,22 +750,47 @@ function App() {
 
               <section className="overview-panel">
                 <div className="overview-panel-heading">
-                  <div><h2>Market Data Quality</h2><p>Feed diagnostics reported by the backend</p></div>
-                  <Activity size={19} />
+                  <div><h2>Global Trading Sessions</h2><p>Live market-session status · displayed in each session's local time</p></div>
+                  <Clock3 size={19} />
                 </div>
-                {marketData?.data_quality ? (
-                  <div className="overview-quality-grid">
-                    {Object.entries(marketData.data_quality).map(([tf, quality]) => (
-                      <div className="overview-quality-item" key={tf}>
-                        <strong>{tf}</strong>
-                        <span>{quality.received} / {quality.requested} received</span>
-                        <small>{quality.data_quality.valid_received} valid · {quality.data_quality.gap_count} gaps · {quality.data_quality.misaligned_count} misaligned</small>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(175px, 1fr))', gap: 12 }}>
+                  {getTradingSessions().map(session => (
+                    <div
+                      key={session.name}
+                      style={{
+                        padding: '16px',
+                        borderRadius: 12,
+                        border: '1px solid rgba(212, 169, 76, 0.18)',
+                        background: 'rgba(255,255,255,0.025)',
+                        minWidth: 0,
+                      }}
+                    >
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+                        <strong style={{ color: '#f0e8d7', fontSize: 14 }}>{session.name}</strong>
+                        <span style={{
+                          fontSize: 10,
+                          fontWeight: 700,
+                          letterSpacing: '0.08em',
+                          color: session.isOpen ? '#45d6a0' : '#9a958a',
+                          background: session.isOpen ? 'rgba(69,214,160,0.10)' : 'rgba(255,255,255,0.06)',
+                          padding: '5px 8px',
+                          borderRadius: 20,
+                        }}>
+                          {session.isOpen ? 'OPEN' : 'CLOSED'}
+                        </span>
                       </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="overview-quality-empty">{apiError || 'Waiting for backend data-quality diagnostics.'}</p>
-                )}
+                      <div style={{ fontSize: 25, fontWeight: 700, color: '#d9ad4f', fontVariantNumeric: 'tabular-nums' }}>
+                        {session.localTime}
+                      </div>
+                      <div style={{ fontSize: 11, color: '#898477', marginTop: 5 }}>
+                        {String(session.openHour).padStart(2, '0')}:00 – {String(session.closeHour).padStart(2, '0')}:00 local
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <p style={{ color: '#898477', fontSize: 11, margin: '14px 0 0' }}>
+                  Session hours are indicative. Liquidity and volatility can vary around market opens, closes and overlaps.
+                </p>
               </section>
               <div className="overview-footer-note">1D / 4H / 1H are background context only. 5M confirms entries; only 15M generates signals. RevAI can make mistakes. Use proper risk management.</div>
             </section>
