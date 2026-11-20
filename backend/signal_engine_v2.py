@@ -403,7 +403,7 @@ def _classify_market_and_setup(
     sniper: bool,
     htf_points: int,
 ) -> dict[str, Any]:
-    """Return distinct setup type, quality tier and market regime labels."""
+    """Classify the market regime separately from a confirmed range-edge reversal."""
     closes = [float(c["close"]) for c in candles]
     recent = candles[-30:]
     ema9 = analysis.get("ema9")
@@ -420,29 +420,57 @@ def _classify_market_and_setup(
         elif ema9 < ema21:
             prior_trend = "BEARISH"
 
-    # Volatility is measured against recent candle ranges to adapt to Gold's
-    # changing price scale rather than relying on a fixed dollar threshold.
     ranges = [float(c["high"]) - float(c["low"]) for c in recent]
     average_range = sum(ranges[:-1]) / max(1, len(ranges) - 1)
     current_range = ranges[-1]
     volatility_ratio = current_range / max(average_range, 1e-9)
 
-    # Count EMA relationship flips over the recent window as a chop proxy.
-    crosses = 0
-    for i in range(2, min(20, len(closes))):
-        left = closes[-i] - (ema21 or closes[-i])
-        right = closes[-i - 1] - (ema21 or closes[-i - 1])
-        if left == 0 or right == 0 or (left > 0) != (right > 0):
-            crosses += 1
+    # Measure price/EMA21 crossings against a rolling EMA, not one fixed
+    # final EMA value. Repeated crossings plus poor directional efficiency
+    # identify a genuinely choppy market rather than a clean sideways range.
+    rolling_sides = []
+    first_end = max(21, len(closes) - 19)
+    for end_index in range(first_end, len(closes) + 1):
+        rolling_ema21 = calculate_ema(closes[:end_index], 21)
+        if rolling_ema21 is None:
+            continue
+        rolling_sides.append(
+            1 if closes[end_index - 1] >= rolling_ema21 else -1
+        )
+
+    ema_crosses = sum(
+        1 for left, right in zip(rolling_sides, rolling_sides[1:])
+        if left != right
+    )
+
+    efficiency_window = closes[-20:] if len(closes) >= 20 else closes
+    total_path = sum(
+        abs(efficiency_window[i] - efficiency_window[i - 1])
+        for i in range(1, len(efficiency_window))
+    )
+    directional_efficiency = (
+        abs(efficiency_window[-1] - efficiency_window[0]) / total_path
+        if total_path > 0 else 0.0
+    )
 
     ema_spread = abs(float(ema9 or close) - float(ema21 or close))
-    if volatility_ratio >= 2.0:
+
+    # A compact range is distinct from a choppy market: a range can be
+    # orderly and respect boundaries; chop repeatedly whipsaws around EMA21.
+    range_window = candles[-21:-1]
+    range_high = max(float(c["high"]) for c in range_window)
+    range_low = min(float(c["low"]) for c in range_window)
+    range_width = range_high - range_low
+    range_width_atr = range_width / max(float(atr), 1e-9)
+    compact_range = 1.5 <= range_width_atr <= 10.0
+
+    if ema_crosses >= 5 and directional_efficiency <= 0.30:
+        market_condition = "CHOPPY"
+    elif volatility_ratio >= 2.0:
         market_condition = "HIGH VOLATILITY"
     elif volatility_ratio <= 0.45:
         market_condition = "LOW VOLATILITY"
-    elif crosses >= 7:
-        market_condition = "CHOPPY"
-    elif ema_spread <= 0.30 * atr:
+    elif ema_spread <= 0.30 * atr and compact_range:
         market_condition = "RANGING"
     elif (
         direction == "BUY" and prior_trend == "BULLISH"
@@ -450,7 +478,7 @@ def _classify_market_and_setup(
     ):
         market_condition = "TRENDING"
     else:
-        market_condition = "RANGING"
+        market_condition = "RANGING" if compact_range else "TRENDING"
 
     directional_context = [
         context.get(tf, {}).get("trend")
@@ -466,38 +494,78 @@ def _classify_market_and_setup(
         for trend in directional_context
     )
 
+    pattern = _candle_pattern(latest, previous)
     reversal_candle = (
-        _candle_pattern(latest, previous).get("bullish")
-        if direction == "BUY"
-        else _candle_pattern(latest, previous).get("bearish")
+        pattern["bullish"] if direction == "BUY" else pattern["bearish"]
     )
     level_rejection = any(
-        (
-            item.get("confluences", {}).get(
-                "bullish_level_rejection" if direction == "BUY" else "bearish_level_rejection",
-                False,
-            )
+        item.get("confluences", {}).get(
+            "bullish_level_rejection" if direction == "BUY" else "bearish_level_rejection",
+            False,
         )
         for item in context.values()
         if item.get("confluences", {}).get("ready")
     )
 
+    # RANGE REVERSAL requires an established sideways range, repeated tests
+    # of the relevant boundary, a rejection wick/pattern, and a close back
+    # inside the prior range. A CHOPPY regime is never relabelled as a
+    # range reversal merely because the 15M scanner found a direction.
+    boundary_tolerance = max(float(atr) * 0.25, abs(close) * 0.0001)
+    support_touches = sum(
+        1 for candle in range_window
+        if float(candle["low"]) <= range_low + boundary_tolerance
+    )
+    resistance_touches = sum(
+        1 for candle in range_window
+        if float(candle["high"]) >= range_high - boundary_tolerance
+    )
+
+    buy_range_reversal = (
+        direction == "BUY"
+        and market_condition == "RANGING"
+        and compact_range
+        and support_touches >= 2
+        and float(latest["low"]) <= range_low + boundary_tolerance
+        and close > range_low + 0.05 * atr
+        and close > float(latest["open"])
+        and pattern["bullish"]
+    )
+    sell_range_reversal = (
+        direction == "SELL"
+        and market_condition == "RANGING"
+        and compact_range
+        and resistance_touches >= 2
+        and float(latest["high"]) >= range_high - boundary_tolerance
+        and close < range_high - 0.05 * atr
+        and close < float(latest["open"])
+        and pattern["bearish"]
+    )
+    range_reversal_confirmed = buy_range_reversal or sell_range_reversal
+    range_reversal_boundary = (
+        "SUPPORT" if buy_range_reversal else
+        "RESISTANCE" if sell_range_reversal else None
+    )
+
     if opposite_htf and structure.get("swing_break"):
         setup_type = "CONFIRMED REVERSAL"
     elif opposite_htf and (reversal_candle or level_rejection):
-        # HTF disagreement plus a rejection is an early warning only.
         setup_type = "EARLY REVERSAL"
     elif structure.get("retest"):
         setup_type = "BREAKOUT RETEST"
     elif structure.get("breakout"):
         setup_type = "BREAKOUT"
         market_condition = "BREAKOUT CONFIRMED"
+    elif market_condition == "CHOPPY":
+        # Keep the market-state label explicit; ordinary chop is not a
+        # support/resistance reversal setup.
+        setup_type = "CHOPPY"
+    elif range_reversal_confirmed:
+        setup_type = "RANGE REVERSAL"
     elif prior_trend == ("BULLISH" if direction == "BUY" else "BEARISH") and matching_htf:
         setup_type = "TREND CONTINUATION"
     elif opposite_htf:
         setup_type = "COUNTERTREND"
-    elif market_condition in ("RANGING", "CHOPPY"):
-        setup_type = "RANGE REVERSAL"
     else:
         setup_type = "MOMENTUM"
 
@@ -517,13 +585,26 @@ def _classify_market_and_setup(
         "quality_tier": quality_tier,
         "market_condition": market_condition,
         "market_structure": structure,
+        "range_reversal": {
+            "confirmed": range_reversal_confirmed,
+            "boundary": range_reversal_boundary,
+            "range_high": round(range_high, 5),
+            "range_low": round(range_low, 5),
+            "range_width_atr": round(range_width_atr, 3),
+            "support_touches": support_touches,
+            "resistance_touches": resistance_touches,
+            "reversal_candle": bool(reversal_candle),
+        },
+        "chop_diagnostics": {
+            "ema21_crosses": ema_crosses,
+            "directional_efficiency": round(directional_efficiency, 3),
+        },
         "volatility_ratio": round(volatility_ratio, 3),
         "higher_timeframe_alignment": {
             "matching": matching_htf,
             "opposing": opposite_htf,
         },
     }
-
 
 def analyse_precision_opportunity(
     candles_by_timeframe: dict[str, list[dict[str, Any]]],
